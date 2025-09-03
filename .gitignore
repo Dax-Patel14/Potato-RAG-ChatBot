@@ -1,0 +1,16 @@
+# Environment variables - contains API keys!
+.env
+
+# Large downloaded model files
+/models/
+
+# Generated vector store
+/faiss_index/
+
+# Python virtual environment
+/myenv/
+/venv/
+
+# Python cache files
+__pycache__/
+*.pyc
