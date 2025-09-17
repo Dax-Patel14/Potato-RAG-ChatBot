@@ -1,42 +1,135 @@
-# File: src/1_ingestion.py
 import os
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings 
-from langchain_community.vectorstores import FAISS
-from langchain.schema import Document
+import fitz  # PyMuPDF
+import base64
 from dotenv import load_dotenv
+
+from langchain.schema import Document
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_community.vectorstores import FAISS
+from langchain_core.messages import HumanMessage
 
 load_dotenv()
 
 # --- Configuration ---
-PDF_PATH = os.path.join("data", "Fungal_diseases_of_potato.pdf")
-FAISS_INDEX_PATH = "faiss_index"
+PDF_DIRECTORY = "data"
+FAISS_INDEX_PATH = "faiss_index_multimodal"
+IMAGE_SAVE_DIRECTORY = "extracted_images"
 
-def load_pdf(file_path: str) -> list[Document]:
-    loader = PyPDFLoader(file_path)
-    return loader.load()
+def extract_text_and_images(pdf_path: str):
+    print(f"Processing {pdf_path}...")
+    # ... (This function remains unchanged from your version) ...
+    doc = fitz.open(pdf_path)
+    all_text = ""
+    image_paths = []
+    os.makedirs(IMAGE_SAVE_DIRECTORY, exist_ok=True)
+    for page_num, page in enumerate(doc):
+        all_text += page.get_text() + "\n"
+        image_list = page.get_images(full=True)
+        for img_index, img in enumerate(image_list):
+            xref = img[0]
+            base_image = doc.extract_image(xref)
+            image_bytes = base_image["image"]
+            image_ext = base_image["ext"]
+            image_filename = f"{os.path.basename(pdf_path)}_p{page_num+1}_img{img_index}.{image_ext}"
+            image_path = os.path.join(IMAGE_SAVE_DIRECTORY, image_filename)
+            with open(image_path, "wb") as img_file:
+                img_file.write(image_bytes)
+            image_paths.append(image_path)
+    return all_text, image_paths
 
-def split_document(documents: list[Document]) -> list[Document]:
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-    return splitter.split_documents(documents)
+def is_image_relevant(image_path: str, llm: ChatOpenAI) -> bool:
+    """
+    Uses gpt-4o to quickly classify if an image is relevant.
+    """
+    print(f"  -> Classifying '{os.path.basename(image_path)}'...")
+    try:
+        with open(image_path, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+        
+        prompt = """
+        Analyze the following image. Is the primary subject a potato tuber, a potato plant, a potato leaf, a microscopic view of a pathogen (like spores or fungi), or a graph/chart related to agriculture?
+        Answer with only a single word: "Yes" or "No".
+        """
+        
+        message = HumanMessage(
+            content=[
+                {"type": "text", "text": prompt},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}},
+            ]
+        )
+        response = llm.invoke([message])
+        answer = response.content.strip().lower()
+        print(f"  -> Classification result: {answer}")
+        return "yes" in answer
+    except Exception as e:
+        print(f"  -> Error during classification: {e}")
+        return False
 
-def embed_and_store_faiss(chunks: list[Document]):
-    print("Initializing OpenAI embedding model...")
-    # Use OpenAI's state-of-the-art embedding model
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-
-    print("Creating FAISS index with OpenAI embeddings...")
-    vector_store = FAISS.from_documents(chunks, embeddings)
-    vector_store.save_local(FAISS_INDEX_PATH)
-    print(f"FAISS index created and saved at {FAISS_INDEX_PATH}")
+def describe_image_with_openai(image_path: str, llm: ChatOpenAI) -> str:
+    """
+    Uses gpt-4o to generate a detailed description for a relevant image.
+    """
+    print(f"  -> Generating detailed description for '{os.path.basename(image_path)}'...")
+    try:
+        with open(image_path, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+        
+        prompt = """
+        You are a world-class expert in plant pathology... (rest of your detailed prompt)
+        """ # Truncated for brevity
+        
+        message = HumanMessage(content=[{"type": "text", "text": prompt}, {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}])
+        response = llm.invoke([message])
+        return response.content
+    except Exception as e:
+        print(f"  -> Error during description: {e}")
+        return "No description generated."
 
 def run_ingestion():
-    print("Starting ingestion pipeline...")
-    documents = load_pdf(PDF_PATH)
-    chunks = split_document(documents)
-    embed_and_store_faiss(chunks)
-    print("--- Ingestion Complete! ---")
+    print("Starting multi-modal ingestion pipeline with AI filtering...")
+    all_chunks = []
+    
+    # Initialize the LLM once to reuse it for all API calls
+    llm = ChatOpenAI(model="gpt-4o", temperature=0.1)
+
+    for filename in os.listdir(PDF_DIRECTORY):
+        if filename.endswith(".pdf"):
+            pdf_path = os.path.join(PDF_DIRECTORY, filename)
+            text, image_paths = extract_text_and_images(pdf_path)
+            
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+            text_chunks = text_splitter.create_documents([text], metadatas=[{"source": filename}])
+            all_chunks.extend(text_chunks)
+            print(f"Created {len(text_chunks)} text chunks for {filename}.")
+            
+            relevant_image_count = 0
+            for image_path in image_paths:
+                # STAGE 1: CLASSIFY AND FILTER
+                if is_image_relevant(image_path, llm):
+                    # STAGE 2: DESCRIBE (only if relevant)
+                    description = describe_image_with_openai(image_path, llm)
+                    image_doc = Document(
+                        page_content=f"Image Description for {os.path.basename(image_path)}: {description}",
+                        metadata={"source": filename, "image_path": image_path}
+                    )
+                    all_chunks.append(image_doc)
+                    relevant_image_count += 1
+                else:
+                    print(f"  -> Skipping irrelevant image: {os.path.basename(image_path)}")
+            
+            print(f"Created descriptions for {relevant_image_count} relevant images in {filename}.")
+
+    if all_chunks:
+        print("\nInitializing OpenAI embedding model for multimodal data...")
+        embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+        
+        print(f"Creating FAISS index for {len(all_chunks)} total chunks...")
+        vector_store = FAISS.from_documents(all_chunks, embeddings)
+        vector_store.save_local(FAISS_INDEX_PATH)
+        print(f"Multimodal FAISS index created and saved at {FAISS_INDEX_PATH}")
+    else:
+        print("No documents or images processed.")
 
 if __name__ == "__main__":
     run_ingestion()
