@@ -18,7 +18,7 @@ IMAGE_SAVE_DIRECTORY = "extracted_images"
 
 def extract_text_and_images(pdf_path: str):
     print(f"Processing {pdf_path}...")
-    # ... (This function remains unchanged from your version) ...
+    
     doc = fitz.open(pdf_path)
     all_text = ""
     image_paths = []
@@ -76,8 +76,8 @@ def describe_image_with_openai(image_path: str, llm: ChatOpenAI) -> str:
             base64_image = base64.b64encode(image_file.read()).decode('utf-8')
         
         prompt = """
-        You are a world-class expert in plant pathology... (rest of your detailed prompt)
-        """ # Truncated for brevity
+        You are an expert plant pathologist. Describe this image from an agricultural research paper in detail. Focus on any visible potato disease symptoms, their color, texture, and shape. Be precise and informative.
+        """ 
         
         message = HumanMessage(content=[{"type": "text", "text": prompt}, {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}])
         response = llm.invoke([message])
@@ -133,3 +133,6 @@ def run_ingestion():
 
 if __name__ == "__main__":
     run_ingestion()
+
+
+    

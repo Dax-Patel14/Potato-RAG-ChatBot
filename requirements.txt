@@ -1,6 +1,8 @@
 langchain
 langchain_community
 pypdf
+PyMuPDF
+Pillow
 sentence-transformers
 faiss-cpu
 huggingface_hub
