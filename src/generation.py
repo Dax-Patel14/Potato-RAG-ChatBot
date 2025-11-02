@@ -18,7 +18,7 @@ def create_conversational_chain(retriever):
     memory = ConversationBufferMemory(
         memory_key='chat_history', 
         return_messages=True,
-        output_key='answer'  # <-- This is the fix!
+        output_key='answer'  
     )
     
     # Create the ConversationalRetrievalChain

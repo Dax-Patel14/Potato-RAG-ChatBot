@@ -10,3 +10,4 @@ python-dotenv
 langchain_huggingface
 ctransformers
 langchain-openai
+streamlit

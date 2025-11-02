@@ -12,7 +12,7 @@ def load_retriever_from_disk():
         embeddings, 
         allow_dangerous_deserialization=True
     )
-    return vector_store.as_retriever(search_kwargs={"k": 5}) # Increased k for richer context
+    return vector_store.as_retriever(search_kwargs={"k": 7}) # Increased k for richer context
 
 def retrieve_docs(retriever, question: str):
     return retriever.invoke(question)

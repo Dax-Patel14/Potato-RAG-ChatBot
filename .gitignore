@@ -14,3 +14,6 @@
 # Python cache files
 __pycache__/
 *.pyc
+
+# Ignore all contents of the extracted_images folder
+extracted_images/
