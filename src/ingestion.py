@@ -1,3 +1,5 @@
+
+
 import os
 import fitz  # PyMuPDF
 import base64
@@ -98,8 +100,15 @@ def run_ingestion():
             pdf_path = os.path.join(PDF_DIRECTORY, filename)
             text, image_paths = extract_text_and_images(pdf_path)
             
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-            text_chunks = text_splitter.create_documents([text], metadatas=[{"source": filename}])
+            # Improved chunking strategy
+            text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=1200,  # Slightly larger chunks
+                chunk_overlap=200,  # Increased overlap for better context
+                separators=["\n\n", "\n", ". ", "! ", "? ", " ", ""],  # Better separators
+                length_function=len,
+                is_separator_regex=False
+            )
+            text_chunks = text_splitter.create_documents([text], metadatas=[{"source": filename, "type": "text"}])
             all_chunks.extend(text_chunks)
             print(f"Created {len(text_chunks)} text chunks for {filename}.")
             
@@ -109,9 +118,16 @@ def run_ingestion():
                 if is_image_relevant(image_path, llm):
                     # STAGE 2: DESCRIBE (only if relevant)
                     description = describe_image_with_openai(image_path, llm)
+                    # Enhanced image document with better context
+                    enhanced_description = f"Image Description for {os.path.basename(image_path)}: {description}\n\nThis image is from document: {filename}. Visual content related to potato diseases, symptoms, or agricultural practices."
                     image_doc = Document(
-                        page_content=f"Image Description for {os.path.basename(image_path)}: {description}",
-                        metadata={"source": filename, "image_path": image_path}
+                        page_content=enhanced_description,
+                        metadata={
+                            "source": filename, 
+                            "image_path": image_path, 
+                            "type": "image_description",
+                            "image_name": os.path.basename(image_path)
+                        }
                     )
                     all_chunks.append(image_doc)
                     relevant_image_count += 1
@@ -136,3 +152,4 @@ if __name__ == "__main__":
 
 
     
+

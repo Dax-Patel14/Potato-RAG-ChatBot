@@ -6,6 +6,7 @@
 
 # Generated vector store
 /faiss_index/
+faiss_index_multimodal/
 
 # Python virtual environment
 /myenv/

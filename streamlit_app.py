@@ -9,11 +9,59 @@ if project_root not in sys.path:
 import streamlit as st
 from src.retrieval import load_retriever_from_disk
 from src.generation import create_conversational_chain
+try:
+    from src.query_processor import QueryProcessor, ContextFilter
+    ENHANCED_PROCESSING = True
+except ImportError:
+    print("Enhanced processing not available, using basic mode")
+    ENHANCED_PROCESSING = False
 
 # --- Page Setup ---
 st.set_page_config(page_title="Aloo Sahayak 🥔", layout="wide")
 st.title("💬 Aloo Sahayak: Your Potato Disease Assistant")
 st.caption("Ask me about potato diseases based on the provided documents!")
+
+# Initialize chat history BEFORE using it
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    st.session_state.chat_history = []
+
+# Sidebar for configuration
+with st.sidebar:
+    st.header("⚙️ Configuration")
+    
+    # System status
+    st.subheader("📊 System Status")
+    if ENHANCED_PROCESSING:
+        st.success("✅ Enhanced Processing Active")
+        st.info("🔍 Advanced query processing and context filtering enabled")
+    else:
+        st.warning("⚠️ Basic Mode")
+        st.info("💡 Install additional dependencies for enhanced features")
+    
+    # Statistics
+    if st.session_state.chat_history:
+        st.metric("Conversations", len(st.session_state.chat_history))
+    
+    # Clear conversation
+    if st.button("🗑️ Clear Conversation"):
+        st.session_state.messages = []
+        st.session_state.chat_history = []
+        st.rerun()
+    
+    st.divider()
+    
+    # Help section
+    st.subheader("💡 Tips for Better Results")
+    st.markdown("""
+    - **Be specific**: Mention disease names, symptoms, or plant parts
+    - **Use context**: Refer to previous messages in follow-up questions  
+    - **Ask about**: Symptoms, causes, treatments, prevention, management
+    - **Examples**: 
+      - "What are the symptoms of late blight?"
+      - "How to prevent blackleg in potatoes?"
+      - "Treatment for ring rot disease"
+    """)
 
 # --- Initialization ---
 @st.cache_resource
@@ -22,12 +70,21 @@ def load_chain():
     chain = create_conversational_chain(retriever)
     return chain
 
-qa_chain = load_chain()
+@st.cache_resource 
+def load_processors():
+    if ENHANCED_PROCESSING:
+        query_processor = QueryProcessor()
+        context_filter = ContextFilter()
+        return query_processor, context_filter
+    return None, None
 
-# Initialize chat history
+qa_chain = load_chain()
+query_processor, context_filter = load_processors()
+
+# Initialize chat history (if not already done above)
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    st.session_state.chat_history = [] # For RAG chain memory
+    st.session_state.chat_history = []
 
 # --- NEW: Intent Classifier ---
 def classify_intent(query):
@@ -92,29 +149,74 @@ if user_query:
         # This prevents polluting the memory with irrelevant context.
             
     elif intent == "rag_question":
-        # This is the original RAG logic
-        with st.spinner("Thinking..."):
-            result = qa_chain.invoke({
-                "question": user_query,
-                "chat_history": st.session_state.chat_history
-            })
-            ai_response = result["answer"]
-            source_documents = result.get("source_documents", [])
-
-            # Add AI response to display state
-            st.session_state.messages.append(("assistant", ai_response))
-            with st.chat_message("assistant"):
-                st.markdown(ai_response)
+        # Enhanced RAG logic with improved processing
+        with st.spinner("Analyzing your question and searching knowledge base..."):
+            try:
+                # Enhanced query processing if available
+                if ENHANCED_PROCESSING and query_processor:
+                    processed_query = query_processor.preprocess_question(
+                        user_query, 
+                        st.session_state.chat_history
+                    )
+                    query_to_use = processed_query['primary_query']
+                    
+                    # Show processed query in debug mode (optional)
+                    if st.sidebar.checkbox("Show Query Processing", value=False):
+                        st.sidebar.write("**Original:**", processed_query['original_question'])
+                        st.sidebar.write("**Enhanced:**", processed_query['enhanced_question'])
+                else:
+                    query_to_use = user_query
                 
-                # Add Expander for Sources
-                if source_documents:
-                    with st.expander("View Sources"):
-                        for i, doc in enumerate(source_documents):
-                            source_name = doc.metadata.get('source', 'Unknown Source')
-                            st.markdown(f"**Source {i+1}:** `{source_name}`")
-                            content_preview = doc.page_content[:250].replace('\n', ' ') + "..."
-                            st.markdown(f"> {content_preview}")
-                            st.divider()
+                # Invoke the chain with the processed query
+                result = qa_chain.invoke({
+                    "question": query_to_use,
+                    "chat_history": st.session_state.chat_history
+                })
+                
+                ai_response = result["answer"]
+                source_documents = result.get("source_documents", [])
+                
+                # Enhanced context filtering if available
+                if ENHANCED_PROCESSING and context_filter and source_documents:
+                    filtered_docs = context_filter.filter_contexts(
+                        source_documents, 
+                        user_query, 
+                        max_contexts=6
+                    )
+                    source_documents = filtered_docs
 
-            # Add this Q&A to the RAG chain's memory
-            st.session_state.chat_history.append((user_query, ai_response))
+                # Add AI response to display state
+                st.session_state.messages.append(("assistant", ai_response))
+                with st.chat_message("assistant"):
+                    st.markdown(ai_response)
+                    
+                    # Enhanced source display
+                    if source_documents:
+                        with st.expander(f"📚 View Sources ({len(source_documents)} found)"):
+                            for i, doc in enumerate(source_documents):
+                                source_name = doc.metadata.get('source', 'Unknown Source')
+                                doc_type = doc.metadata.get('type', 'text')
+                                
+                                # Different display for different document types
+                                if doc_type == 'image_description':
+                                    st.markdown(f"**📷 Image Source {i+1}:** `{source_name}`")
+                                    st.markdown(f"*Image: {doc.metadata.get('image_name', 'N/A')}*")
+                                else:
+                                    st.markdown(f"**📄 Source {i+1}:** `{source_name}`")
+                                
+                                content_preview = doc.page_content[:300].replace('\n', ' ')
+                                if len(doc.page_content) > 300:
+                                    content_preview += "..."
+                                st.markdown(f"> {content_preview}")
+                                
+                                if i < len(source_documents) - 1:
+                                    st.divider()
+                    else:
+                        st.info("💡 No specific sources found. Response based on general knowledge.")
+
+                # Add this Q&A to the RAG chain's memory
+                st.session_state.chat_history.append((user_query, ai_response))
+                
+            except Exception as e:
+                st.error(f"Sorry, I encountered an error: {str(e)}")
+                st.info("Please try rephrasing your question or contact support if the issue persists.")

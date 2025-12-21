@@ -11,3 +11,11 @@ langchain_huggingface
 ctransformers
 langchain-openai
 streamlit
+ragas
+pandas
+datasets
+rank_bm25
+nltk
+spacy
+scikit-learn
+
