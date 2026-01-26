@@ -1,13 +1,11 @@
-
-
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chains import ConversationalRetrievalChain
-from langchain.schema import BaseMessage, HumanMessage, AIMessage
+from langchain.schema import BaseMessage, HumanMessage, AIMessage, Document
 from langchain_core.prompts import PromptTemplate
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 load_dotenv()
 
@@ -27,20 +25,24 @@ class ImprovedConversationalChain:
         
         # Custom prompt for better context handling
         self.qa_prompt = PromptTemplate(
-            template="""You are Aloo Sahayak, an expert agricultural AI assistant specializing in potato diseases.
+            template="""You are Aloo Sahayak, an expert agricultural AI assistant specializing in potato diseases, nutrition, and cultivation practices.
 
-Use the following pieces of context and conversation history to answer the question accurately.
-If you don't know the answer based on the provided context, say "I don't have enough information about this in my knowledge base."
+INSTRUCTIONS:
+1. If the user sends a simple greeting (hi, hello, hey, thanks, bye), respond politely and briefly. Example: "Hello! I'm Aloo Sahayak. How can I help you with potato cultivation today?"
+2. For questions about potatoes (diseases, nutrition, fertilizers, cultivation), use the provided context to give accurate, detailed answers.
+3. If the context doesn't contain sufficient information to answer the question, say "I don't have enough information about this in my knowledge base."
+4. NEVER return generic greetings as answers to factual questions - always attempt to use the context first.
+5. Be professional, helpful, and cite sources when available.
 
 Conversation History:
 {chat_history}
 
-Context:
+Context from Knowledge Base:
 {context}
 
-Question: {question}
+User Question: {question}
 
-Provide a comprehensive, accurate answer based on the context. Always mention specific sources when citing information.
+Provide a comprehensive answer based on the context. For factual questions, always prioritize using the retrieved context over general knowledge.
 
 Answer:""",
             input_variables=["context", "question", "chat_history"]
@@ -59,7 +61,7 @@ Answer:""",
         )
     
     def invoke(self, inputs):
-        """Enhanced invoke method with better error handling"""
+        """Enhanced invoke method"""
         try:
             # Extract question and chat_history from inputs
             question = inputs.get("question", "")
@@ -69,7 +71,7 @@ Answer:""",
             if external_chat_history:
                 self._sync_memory_with_external_history(external_chat_history)
             
-            # Invoke the chain
+            # Invoke the chain to get text answer
             result = self.chain.invoke({"question": question})
             
             return result
@@ -102,4 +104,3 @@ def create_conversational_chain(retriever):
     
     print("Improved conversational RAG chain created successfully.")
     return chain
-

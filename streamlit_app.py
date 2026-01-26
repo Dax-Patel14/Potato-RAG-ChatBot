@@ -86,42 +86,6 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
     st.session_state.chat_history = []
 
-# --- NEW: Intent Classifier ---
-def classify_intent(query):
-    """
-    Classifies the user's intent as 'rag_question' or 'chit_chat'.
-    """
-    query_lower = query.lower().strip()
-    
-    # Simple keywords for non-RAG chat
-    chit_chat_keywords = [
-        'hello', 'hi', 'hey', 'good morning', 'good evening',
-        'thanks', 'thank you', 'thx', 'appreciate it',
-        'bye', 'goodbye', 'see you'
-    ]
-    
-    # Check if any keyword is in the query
-    if any(keyword in query_lower for keyword in chit_chat_keywords):
-        return "chit_chat"
-    
-    return "rag_question"
-
-# --- NEW: Chit-Chat Response Generator ---
-def get_chit_chat_response(query):
-    """
-    Returns a pre-defined response for chit-chat.
-    """
-    query_lower = query.lower().strip()
-    
-    if any(keyword in query_lower for keyword in ['hello', 'hi', 'hey']):
-        return "Hello! I'm Aloo Sahayak. How can I help you with potato diseases today?"
-    if any(keyword in query_lower for keyword in ['thanks', 'thank you']):
-        return "You're welcome! Do you have any other questions?"
-    if any(keyword in query_lower for keyword in ['bye', 'goodbye']):
-        return "Goodbye! Have a great day."
-        
-    return "I'm sorry, I can only assist with questions about potato diseases."
-
 # --- Display existing messages ---
 for role, content in st.session_state.messages:
     with st.chat_message(role):
@@ -136,87 +100,68 @@ if user_query:
     with st.chat_message("user"):
         st.markdown(user_query)
 
-    # --- UPDATED: Intent Routing Logic ---
-    intent = classify_intent(user_query)
-
-    if intent == "chit_chat":
-        # Get and display the pre-defined chit-chat response
-        ai_response = get_chit_chat_response(user_query)
-        st.session_state.messages.append(("assistant", ai_response))
-        with st.chat_message("assistant"):
-            st.markdown(ai_response)
-        # NOTE: We do NOT add this to the RAG chain's memory (`st.session_state.chat_history`)
-        # This prevents polluting the memory with irrelevant context.
+    # Unified RAG processing - LLM intelligently handles all query types
+    with st.spinner("Thinking..."):
+        try:
+            # Enhanced query processing if available
+            if ENHANCED_PROCESSING and query_processor:
+                processed_query = query_processor.preprocess_question(
+                    user_query, 
+                    st.session_state.chat_history
+                )
+                query_to_use = processed_query['primary_query']
+                
+                # Show processed query in debug mode (optional)
+                if st.sidebar.checkbox("Show Query Processing", value=False):
+                    st.sidebar.write("**Original:**", processed_query['original_question'])
+                    st.sidebar.write("**Enhanced:**", processed_query['enhanced_question'])
+            else:
+                query_to_use = user_query
             
-    elif intent == "rag_question":
-        # Enhanced RAG logic with improved processing
-        with st.spinner("Analyzing your question and searching knowledge base..."):
-            try:
-                # Enhanced query processing if available
-                if ENHANCED_PROCESSING and query_processor:
-                    processed_query = query_processor.preprocess_question(
-                        user_query, 
-                        st.session_state.chat_history
-                    )
-                    query_to_use = processed_query['primary_query']
-                    
-                    # Show processed query in debug mode (optional)
-                    if st.sidebar.checkbox("Show Query Processing", value=False):
-                        st.sidebar.write("**Original:**", processed_query['original_question'])
-                        st.sidebar.write("**Enhanced:**", processed_query['enhanced_question'])
+            # Invoke the chain with the processed query
+            result = qa_chain.invoke({
+                "question": query_to_use,
+                "chat_history": st.session_state.chat_history
+            })
+            
+            ai_response = result["answer"]
+            source_documents = result.get("source_documents", [])
+            
+            # Enhanced context filtering if available
+            if ENHANCED_PROCESSING and context_filter and source_documents:
+                filtered_docs = context_filter.filter_contexts(
+                    source_documents, 
+                    user_query, 
+                    max_contexts=6
+                )
+                source_documents = filtered_docs
+
+            # Add AI response to display state
+            st.session_state.messages.append(("assistant", ai_response))
+            with st.chat_message("assistant"):
+                st.markdown(ai_response)
+                
+                # Enhanced source display
+                if source_documents:
+                    st.markdown("---")
+                    with st.expander(f"📚 View Sources ({len(source_documents)} found)"):
+                        for i, doc in enumerate(source_documents):
+                            source_name = doc.metadata.get('source', 'Unknown Source')
+                            st.markdown(f"**Source {i+1}:** `{source_name}`")
+                            
+                            content_preview = doc.page_content[:300].replace('\n', ' ')
+                            if len(doc.page_content) > 300:
+                                content_preview += "..."
+                            st.markdown(f"> {content_preview}")
+                            
+                            if i < len(source_documents) - 1:
+                                st.divider()
                 else:
-                    query_to_use = user_query
-                
-                # Invoke the chain with the processed query
-                result = qa_chain.invoke({
-                    "question": query_to_use,
-                    "chat_history": st.session_state.chat_history
-                })
-                
-                ai_response = result["answer"]
-                source_documents = result.get("source_documents", [])
-                
-                # Enhanced context filtering if available
-                if ENHANCED_PROCESSING and context_filter and source_documents:
-                    filtered_docs = context_filter.filter_contexts(
-                        source_documents, 
-                        user_query, 
-                        max_contexts=6
-                    )
-                    source_documents = filtered_docs
+                    st.info("💡 No specific sources found. Response based on general knowledge.")
 
-                # Add AI response to display state
-                st.session_state.messages.append(("assistant", ai_response))
-                with st.chat_message("assistant"):
-                    st.markdown(ai_response)
-                    
-                    # Enhanced source display
-                    if source_documents:
-                        with st.expander(f"📚 View Sources ({len(source_documents)} found)"):
-                            for i, doc in enumerate(source_documents):
-                                source_name = doc.metadata.get('source', 'Unknown Source')
-                                doc_type = doc.metadata.get('type', 'text')
-                                
-                                # Different display for different document types
-                                if doc_type == 'image_description':
-                                    st.markdown(f"**📷 Image Source {i+1}:** `{source_name}`")
-                                    st.markdown(f"*Image: {doc.metadata.get('image_name', 'N/A')}*")
-                                else:
-                                    st.markdown(f"**📄 Source {i+1}:** `{source_name}`")
-                                
-                                content_preview = doc.page_content[:300].replace('\n', ' ')
-                                if len(doc.page_content) > 300:
-                                    content_preview += "..."
-                                st.markdown(f"> {content_preview}")
-                                
-                                if i < len(source_documents) - 1:
-                                    st.divider()
-                    else:
-                        st.info("💡 No specific sources found. Response based on general knowledge.")
-
-                # Add this Q&A to the RAG chain's memory
-                st.session_state.chat_history.append((user_query, ai_response))
-                
-            except Exception as e:
-                st.error(f"Sorry, I encountered an error: {str(e)}")
-                st.info("Please try rephrasing your question or contact support if the issue persists.")
+            # Add this Q&A to the RAG chain's memory
+            st.session_state.chat_history.append((user_query, ai_response))
+            
+        except Exception as e:
+            st.error(f"Sorry, I encountered an error: {str(e)}")
+            st.info("Please try rephrasing your question or contact support if the issue persists.")
