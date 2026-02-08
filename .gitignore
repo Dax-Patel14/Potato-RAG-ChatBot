@@ -21,3 +21,7 @@ extracted_images/
 
 # chat_history.json for local persistent system
 chat_history.json
+
+# SQLite Database
+chat_history.db
+*.db
