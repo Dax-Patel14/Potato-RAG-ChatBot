@@ -18,3 +18,6 @@ __pycache__/
 
 # Ignore all contents of the extracted_images folder
 extracted_images/
+
+# chat_history.json for local persistent system
+chat_history.json

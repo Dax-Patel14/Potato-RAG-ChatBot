@@ -42,7 +42,7 @@ class EnhancedRetriever(BaseRetriever):
         
         # Create semantic retriever with more candidates
         self._semantic_retriever = self._vector_store.as_retriever(
-            search_kwargs={"k": 12}
+            search_kwargs={"k": 9}
         )
         
         # Try to create BM25 retriever for hybrid search
