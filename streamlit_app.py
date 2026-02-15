@@ -328,7 +328,28 @@ if user_query:
             # Save Assistant Message
             active_chat["messages"].append(("assistant", ai_response))
             active_chat["chat_history"].append((user_query, ai_response))
-            if DB_AVAILABLE: add_message(st.session_state.active_chat_id, "assistant", ai_response)
+            if DB_AVAILABLE:
+                # Serialize source_documents if available
+                serialized_sources = []
+                try:
+                    for doc in source_documents:
+                        try:
+                            src = doc.metadata.get('source', None) if hasattr(doc, 'metadata') else None
+                            meta = doc.metadata if hasattr(doc, 'metadata') else {}
+                            page_content = doc.page_content if hasattr(doc, 'page_content') else str(doc)
+                        except Exception:
+                            src = None
+                            meta = {}
+                            page_content = str(doc)
+                        serialized_sources.append({
+                            "source": src,
+                            "page_content": page_content,
+                            "metadata": meta
+                        })
+                except Exception:
+                    serialized_sources = []
+
+                add_message(st.session_state.active_chat_id, "assistant", ai_response, metadata={"source_documents": serialized_sources})
             
         except Exception as e:
             st.error(f"Error: {str(e)}")
