@@ -10,6 +10,7 @@ from typing import List
 import asyncio
 import threading
 import time
+import logging
 
 from backend.config import CORS_ORIGINS, API_HOST, API_PORT, DATABASE_TYPE, DEBUG
 from backend.schemas import (
@@ -23,6 +24,10 @@ from src.chat_db import (
 )
 from src.generation import create_conversational_chain
 from src.retrieval import load_retriever_from_disk
+from src.logging_utils import setup_logger, log_timing, log_query_start, log_query_complete
+
+# Initialize logger
+api_logger = setup_logger('api')
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -232,16 +237,28 @@ async def get_chat_messages(chat_id: str):
 @app.post("/api/chats/{chat_id}/messages")
 async def send_message(chat_id: str, message: MessageCreate):
     """Send message and get AI response (non-streaming)"""
+    request_id = str(uuid.uuid4())[:8]
+    request_start = time.perf_counter()
+    
     try:
+        log_query_start(api_logger, request_id, message.content[:100])
+        
         if qa_chain is None:
             raise HTTPException(status_code=500, detail="RAG chain not loaded")
         
         user_query = message.content
         
         # Add user message to database
+        db_start = time.perf_counter()
         add_message(chat_id, "user", user_query)
+        db_elapsed = time.perf_counter() - db_start
+        
+        log_timing(api_logger, "DB_ADD_USER_MESSAGE", {
+            'duration_ms': round(db_elapsed * 1000, 2)
+        })
         
         # Get chat history for context
+        hist_start = time.perf_counter()
         messages = get_messages(chat_id)
         chat_history = [
             (msg[0], msg[1]) 
@@ -255,6 +272,12 @@ async def send_message(chat_id: str, message: MessageCreate):
             if i + 1 < len(chat_history):
                 reconstructed_history.append((chat_history[i][1], chat_history[i+1][1]))
         
+        hist_elapsed = time.perf_counter() - hist_start
+        log_timing(api_logger, "HISTORY_RETRIEVAL", {
+            'duration_ms': round(hist_elapsed * 1000, 2),
+            'history_items': len(reconstructed_history)
+        })
+        
         # Add language instruction
         if message.language == "Hindi":
             query = user_query + "\n\nIMPORTANT: Respond to this question in Hindi (हिंदी में उत्तर दें)."
@@ -262,18 +285,19 @@ async def send_message(chat_id: str, message: MessageCreate):
             query = user_query
         
         # Get AI response (measure time)
-        t0 = time.perf_counter()
+        chain_start = time.perf_counter()
         result = qa_chain.invoke({
             "question": query,
             "chat_history": reconstructed_history
         })
-        t_chain = time.perf_counter() - t0
+        chain_elapsed = time.perf_counter() - chain_start
+        
+        log_timing(api_logger, "AI_CHAIN_INVOCATION", {
+            'duration_ms': round(chain_elapsed * 1000, 2)
+        })
         
         ai_response = result.get("answer", "")
         source_docs = result.get("source_documents", [])
-        
-        # Add AI message to database (include source metadata)
-        add_message(chat_id, "assistant", ai_response, metadata={"source_documents": serialized_sources})
         
         # Serialize source documents to JSON-friendly structure
         serialized_sources = []
@@ -292,9 +316,19 @@ async def send_message(chat_id: str, message: MessageCreate):
                 "page_content": page_content,
                 "metadata": meta
             })
+        
+        # Add AI message to database
+        db_ai_start = time.perf_counter()
+        add_message(chat_id, "assistant", ai_response, metadata={"source_documents": serialized_sources})
+        db_ai_elapsed = time.perf_counter() - db_ai_start
+        
+        log_timing(api_logger, "DB_ADD_AI_MESSAGE", {
+            'duration_ms': round(db_ai_elapsed * 1000, 2),
+            'response_length': len(ai_response)
+        })
 
-        total_time = round(t_chain, 3)
-        print(f"[timing] send_message chat_id={chat_id} chain_s={total_time}s")
+        total_time = time.perf_counter() - request_start
+        log_query_complete(api_logger, request_id, total_time, "SUCCESS")
 
         return {
             "user_message": user_query,
@@ -302,11 +336,14 @@ async def send_message(chat_id: str, message: MessageCreate):
             "sources_count": len(serialized_sources),
             "source_documents": serialized_sources,
             "language": message.language,
-            "timings": {"chain_s": total_time}
+            "timings": {"total_ms": round(total_time * 1000, 2)}
         }
     except HTTPException:
         raise
     except Exception as e:
+        total_time = time.perf_counter() - request_start
+        log_query_complete(api_logger, request_id, total_time, f"FAILED: {type(e).__name__}")
+        api_logger.error(f"Error in send_message: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== WebSocket for Streaming ====================
@@ -314,6 +351,9 @@ async def send_message(chat_id: str, message: MessageCreate):
 @app.websocket("/api/ws/chats/{chat_id}/stream")
 async def websocket_stream(websocket: WebSocket, chat_id: str):
     """WebSocket endpoint for real-time message streaming"""
+    request_id = str(uuid.uuid4())[:8]
+    request_start = time.perf_counter()
+    
     await websocket.accept()
     
     try:
@@ -330,8 +370,16 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                 })
                 continue
             
+            log_query_start(api_logger, request_id, user_query[:100])
+            
             # Add user message to database
+            db_start = time.perf_counter()
             add_message(chat_id, "user", user_query)
+            db_elapsed = time.perf_counter() - db_start
+            
+            log_timing(api_logger, "DB_ADD_USER_WS", {
+                'duration_ms': round(db_elapsed * 1000, 2)
+            })
             
             # Notify client that user message received
             await websocket.send_json({
@@ -340,6 +388,7 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
             })
             
             # Get chat history
+            hist_start = time.perf_counter()
             messages = get_messages(chat_id)
             chat_history = [
                 (msg[0], msg[1])
@@ -353,6 +402,12 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                 if i + 1 < len(chat_history):
                     reconstructed_history.append((chat_history[i][1], chat_history[i+1][1]))
             
+            hist_elapsed = time.perf_counter() - hist_start
+            log_timing(api_logger, "HISTORY_RETRIEVAL_WS", {
+                'duration_ms': round(hist_elapsed * 1000, 2),
+                'history_items': len(reconstructed_history)
+            })
+            
             # Add language instruction
             if language == "Hindi":
                 query = user_query + "\n\nIMPORTANT: Respond to this question in Hindi (हिंदी में उत्तर दें)."
@@ -360,10 +415,11 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                 query = user_query
             
             # Stream the response and measure timings
-            t0 = time.perf_counter()
+            stream_start = time.perf_counter()
             full_response = ""
             source_docs = []
             first_chunk_time = None
+            chunk_count = 0
 
             # Use an asyncio.Queue to receive chunks from a background thread.
             queue: asyncio.Queue = asyncio.Queue()
@@ -391,8 +447,9 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
 
                     if stream_output.get('type') == 'chunk':
                         chunk_content = stream_output['content']
+                        chunk_count += 1
                         if first_chunk_time is None:
-                            first_chunk_time = time.perf_counter() - t0
+                            first_chunk_time = time.perf_counter() - stream_start
                         full_response += chunk_content
                         await websocket.send_json({
                             "type": "chunk",
@@ -402,7 +459,7 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                     elif stream_output.get('type') == 'complete':
                         full_response = stream_output.get('answer', full_response)
                         source_docs = stream_output.get('source_documents', [])
-                        total = time.perf_counter() - t0
+                        total_stream_elapsed = time.perf_counter() - stream_start
 
                         # Serialize source documents to JSON-friendly structure
                         serialized_sources = []
@@ -422,14 +479,21 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                                 "metadata": meta
                             })
 
+                        log_timing(api_logger, "STREAMING_COMPLETE", {
+                            'duration_ms': round(total_stream_elapsed * 1000, 2),
+                            'chunks': chunk_count,
+                            'response_length': len(full_response),
+                            'first_chunk_ms': round(first_chunk_time * 1000, 2) if first_chunk_time else None
+                        })
+
                         await websocket.send_json({
                             "type": "complete",
                             "content": full_response,
                             "sources_count": len(serialized_sources),
                             "source_documents": serialized_sources,
                             "timings": {
-                                "first_chunk_s": round(first_chunk_time, 3) if first_chunk_time else None,
-                                "total_s": round(total, 3)
+                                "first_chunk_ms": round(first_chunk_time * 1000, 2) if first_chunk_time else None,
+                                "total_ms": round(total_stream_elapsed * 1000, 2)
                             }
                         })
                         break
@@ -442,22 +506,30 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                         break
 
                 # Add AI response to database after streaming completes (include sources metadata)
+                db_ai_start = time.perf_counter()
                 add_message(chat_id, "assistant", full_response, metadata={"source_documents": serialized_sources})
-                if first_chunk_time is None:
-                    first_chunk_time = time.perf_counter() - t0
-                total = time.perf_counter() - t0
-                print(f"[timing] websocket_stream chat_id={chat_id} first_chunk_s={round(first_chunk_time,3)} total_s={round(total,3)}")
+                db_ai_elapsed = time.perf_counter() - db_ai_start
+                
+                log_timing(api_logger, "DB_ADD_AI_WS", {
+                    'duration_ms': round(db_ai_elapsed * 1000, 2),
+                    'response_length': len(full_response)
+                })
+                
+                total_elapsed = time.perf_counter() - request_start
+                log_query_complete(api_logger, request_id, total_elapsed, "SUCCESS")
 
             except Exception as e:
                 await websocket.send_json({
                     "type": "error",
                     "error": f"Error generating response: {str(e)}"
                 })
+                total_elapsed = time.perf_counter() - request_start
+                log_query_complete(api_logger, request_id, total_elapsed, f"FAILED: {type(e).__name__}")
     
     except WebSocketDisconnect:
-        print(f"WebSocket client disconnected")
+        api_logger.info(f"WebSocket client disconnected - request_id={request_id}")
     except Exception as e:
-        print(f"WebSocket error: {e}")
+        api_logger.error(f"WebSocket error: {e}")
         try:
             await websocket.send_json({
                 "type": "error",

@@ -5,9 +5,15 @@ from langchain_community.retrievers import BM25Retriever # Keyword based
 from langchain.schema import Document, BaseRetriever
 from typing import List, Any, Optional
 from pydantic import Field, PrivateAttr
+import time
+import uuid
+from src.logging_utils import setup_logger, timer, log_timing, log_retrieval_metrics
 
 # Point this to the new multimodal index directory
 FAISS_INDEX_PATH = "faiss_index_multimodal"
+
+# Initialize logger
+logger = setup_logger('retrieval')
 
 class EnhancedRetriever(BaseRetriever):
     """Enhanced retriever that inherits from BaseRetriever for LangChain compatibility"""
@@ -83,6 +89,7 @@ class EnhancedRetriever(BaseRetriever):
     
     def preprocess_query(self, question: str) -> str:
         """Enhance query with domain knowledge"""
+        start_time = time.perf_counter()
         question_lower = question.lower()
         
         # Disease name expansions
@@ -98,6 +105,22 @@ class EnhancedRetriever(BaseRetriever):
         }
         
         enhanced_question = question
+        enhancements_applied = []
+        
+        for disease, expansion in expansions.items():
+            if disease in question_lower:
+                enhanced_question += f" {expansion}"
+                enhancements_applied.append(disease)
+        
+        elapsed = time.perf_counter() - start_time
+        if enhancements_applied:
+            log_timing(logger, "QUERY_PREPROCESS", {
+                'duration_ms': round(elapsed * 1000, 2),
+                'enhancements': len(enhancements_applied),
+                'applied_domains': ','.join(enhancements_applied[:3])
+            })
+        
+        return enhanced_question
         for disease, expansion in expansions.items():
             if disease in question_lower:
                 enhanced_question += f" {expansion}"
@@ -106,6 +129,8 @@ class EnhancedRetriever(BaseRetriever):
     
     def rerank_documents(self, docs: List[Document], question: str) -> List[Document]:
         """Rerank documents by relevance"""
+        start_time = time.perf_counter()
+        
         if not docs:
             return docs
         
@@ -137,26 +162,69 @@ class EnhancedRetriever(BaseRetriever):
         
         # Sort by relevance and return top documents
         scored_docs.sort(key=lambda x: x[1], reverse=True)
-        return [doc for doc, _ in scored_docs[:8]]  # Return top 8
+        result_docs = [doc for doc, _ in scored_docs[:8]]  # Return top 8
+        
+        elapsed = time.perf_counter() - start_time
+        log_timing(logger, "DOCUMENT_RERANKING", {
+            'duration_ms': round(elapsed * 1000, 2),
+            'docs_processed': len(docs),
+            'docs_returned': len(result_docs)
+        })
+        
+        return result_docs
     
     def _get_relevant_documents(self, query: str, *, run_manager=None) -> List[Document]:
         """
         Main retrieval method - required by BaseRetriever.
         Note: The argument name must be 'query' to match BaseRetriever signature.
         """
+        total_start = time.perf_counter()
+        retrieval_methods = []
+        
         try:
             # Preprocess the query
             enhanced_question = self.preprocess_query(query)
             
             # Retrieve documents using hybrid search if available
             if self._bm25_retriever:
-                docs = self._ensemble_retriever.invoke(enhanced_question)
+                sem_start = time.perf_counter()
+                try:
+                    docs = self._ensemble_retriever.invoke(enhanced_question)
+                    retrieval_methods = ['ensemble']
+                except Exception as e:
+                    logger.warning(f"Ensemble retrieval failed, using semantic: {e}")
+                    sem_start = time.perf_counter()
+                    docs = self._semantic_retriever.invoke(enhanced_question)
+                    retrieval_methods = ['semantic_fallback']
+                
+                sem_elapsed = time.perf_counter() - sem_start
+                log_timing(logger, "ENSEMBLE_RETRIEVAL", {
+                    'duration_ms': round(sem_elapsed * 1000, 2),
+                    'docs_retrieved': len(docs)
+                })
             else:
+                sem_start = time.perf_counter()
                 docs = self._semantic_retriever.invoke(enhanced_question)
+                sem_elapsed = time.perf_counter() - sem_start
+                retrieval_methods = ['semantic']
+                
+                log_timing(logger, "SEMANTIC_RETRIEVAL", {
+                    'duration_ms': round(sem_elapsed * 1000, 2),
+                    'docs_retrieved': len(docs)
+                })
             
             # Also try original question if enhanced didn't work well
             if len(docs) < 5:
+                orig_start = time.perf_counter()
                 additional_docs = self._semantic_retriever.invoke(query)
+                orig_elapsed = time.perf_counter() - orig_start
+                
+                log_timing(logger, "FALLBACK_RETRIEVAL", {
+                    'duration_ms': round(orig_elapsed * 1000, 2),
+                    'docs_retrieved': len(additional_docs),
+                    'reason': 'insufficient_results'
+                })
+                
                 # Combine and deduplicate
                 all_docs = docs + additional_docs
                 seen_content = set()
@@ -167,15 +235,29 @@ class EnhancedRetriever(BaseRetriever):
                         seen_content.add(content_hash)
                         unique_docs.append(doc)
                 docs = unique_docs
+                retrieval_methods.append('fallback')
             
             # Rerank for better relevance
             reranked_docs = self.rerank_documents(docs, query)
             
+            # Log overall retrieval metrics
+            total_elapsed = time.perf_counter() - total_start
+            log_retrieval_metrics(logger, None, len(reranked_docs), total_elapsed, methods=retrieval_methods)
+            
             return reranked_docs
             
         except Exception as e:
-            print(f"Enhanced retrieval failed, using fallback: {e}")
-            return self._semantic_retriever.invoke(query)
+            logger.error(f"Enhanced retrieval failed: {e}")
+            fallback_start = time.perf_counter()
+            result = self._semantic_retriever.invoke(query)
+            fallback_elapsed = time.perf_counter() - fallback_start
+            
+            log_timing(logger, "COMPLETE_FALLBACK", {
+                'duration_ms': round(fallback_elapsed * 1000, 2),
+                'error': str(e)[:50]
+            })
+            
+            return result
 
     # Note: Do not override 'invoke' manually. BaseRetriever handles it and calls _get_relevant_documents.
 

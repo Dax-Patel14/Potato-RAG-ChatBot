@@ -1,0 +1,35 @@
+2026-02-22 12:15:35,923 | INFO     | api             | ====================================================================================================
+2026-02-22 12:15:35,923 | INFO     | api             | QUERY_START | ID: defe9969 | Question: Which fertilizer to use for phosphorus deficiency? ...
+2026-02-22 12:15:35,923 | INFO     | api             | ====================================================================================================
+2026-02-22 12:15:35,928 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.03ms
+2026-02-22 12:15:35,931 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.58ms | history_items=2
+2026-02-22 12:15:35,932 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.17ms | history_items=2
+2026-02-22 12:17:01,449 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 42477.27ms | docs_retrieved=12
+2026-02-22 12:17:01,450 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.59ms | docs_processed=12 | docs_returned=8
+2026-02-22 12:17:01,450 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=42478.56 | methods=ensemble
+2026-02-22 12:17:54,241 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 138308.17ms | chunk_count=1 | answer_length=2079
+2026-02-22 12:17:54,242 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=138309.47 | chunks=1 | tokens=285
+2026-02-22 12:17:54,242 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 138310.65ms | chunks=1 | response_length=2079 | first_chunk_ms=138309.41
+2026-02-22 12:17:54,247 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 3.94ms | response_length=2079
+2026-02-22 12:17:54,248 | INFO     | api             | ====================================================================================================
+2026-02-22 12:17:54,248 | INFO     | api             | QUERY_COMPLETE | ID: defe9969 | Status: SUCCESS
+2026-02-22 12:17:54,248 | INFO     | api             | TOTAL_TIME | 138326.49ms
+2026-02-22 12:17:54,248 | INFO     | api             | ====================================================================================================
+2026-02-22 12:17:54,253 | INFO     | api             | WebSocket client disconnected - request_id=defe9969
+2026-02-22 12:19:23,913 | INFO     | api             | ====================================================================================================
+2026-02-22 12:19:23,913 | INFO     | api             | QUERY_START | ID: e0ae22be | Question: How to manage micro nutrition's in potato? ...
+2026-02-22 12:19:23,913 | INFO     | api             | ====================================================================================================
+2026-02-22 12:19:23,920 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 6.18ms
+2026-02-22 12:19:23,922 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.18ms | history_items=0
+2026-02-22 12:20:50,204 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 43223.19ms | docs_retrieved=14
+2026-02-22 12:20:50,205 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.38ms | docs_processed=14 | docs_returned=8
+2026-02-22 12:20:50,205 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=43224.32 | methods=ensemble
+2026-02-22 12:21:43,227 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 139303.44ms | chunk_count=1 | answer_length=2372
+2026-02-22 12:21:43,228 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=139304.43 | chunks=1 | tokens=317
+2026-02-22 12:21:43,229 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 139305.86ms | chunks=1 | response_length=2372 | first_chunk_ms=139304.44
+2026-02-22 12:21:43,235 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 4.65ms | response_length=2372
+2026-02-22 12:21:43,235 | INFO     | api             | ====================================================================================================
+2026-02-22 12:21:43,235 | INFO     | api             | QUERY_COMPLETE | ID: e0ae22be | Status: SUCCESS
+2026-02-22 12:21:43,235 | INFO     | api             | TOTAL_TIME | 139323.25ms
+2026-02-22 12:21:43,236 | INFO     | api             | ====================================================================================================
+2026-02-22 12:21:43,239 | INFO     | api             | WebSocket client disconnected - request_id=e0ae22be

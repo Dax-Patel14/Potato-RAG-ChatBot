@@ -4,6 +4,11 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from typing import List
 import re
+import time
+from src.logging_utils import setup_logger, timer, log_timing
+
+# Initialize logger
+logger = setup_logger('query_processor')
 
 class QueryProcessor:
     """Advanced query processing and enhancement for agricultural domain"""
@@ -41,8 +46,15 @@ Alternative Questions:
     
     def create_standalone_question(self, question: str, chat_history: List) -> str:
         """Convert follow-up question to standalone question"""
+        start_time = time.perf_counter()
+        
         try:
             if not chat_history or len(chat_history) == 0:
+                elapsed = time.perf_counter() - start_time
+                log_timing(logger, "STANDALONE_QUESTION", {
+                    'duration_ms': round(elapsed * 1000, 2),
+                    'status': 'skipped_no_history'
+                })
                 return question
             
             # Format chat history
@@ -57,30 +69,61 @@ Alternative Questions:
                 )
             ).content
             
+            elapsed = time.perf_counter() - start_time
+            log_timing(logger, "STANDALONE_QUESTION", {
+                'duration_ms': round(elapsed * 1000, 2),
+                'history_turns': len(chat_history),
+                'status': 'generated'
+            })
+            
             return standalone_question.strip()
             
         except Exception as e:
-            print(f"Standalone question generation failed: {e}")
+            elapsed = time.perf_counter() - start_time
+            logger.error(f"Standalone question generation failed: {e}")
+            log_timing(logger, "STANDALONE_QUESTION", {
+                'duration_ms': round(elapsed * 1000, 2),
+                'status': 'failed',
+                'error': type(e).__name__
+            })
             return question
     
     def expand_query(self, question: str) -> List[str]:
         """Generate alternative phrasings for better retrieval"""
+        start_time = time.perf_counter()
+        
         try:
             response = self.llm.invoke(self.expansion_prompt.format(question=question))
             
             queries = [question]  # Always include original
             lines = response.content.split('\n')
             
+            expanded_count = 0
             for line in lines:
                 if re.match(r'^\d+\.', line.strip()):
                     expanded_query = re.sub(r'^\d+\.\s*', '', line.strip())
                     if expanded_query and len(expanded_query) > 10:
                         queries.append(expanded_query)
+                        expanded_count += 1
             
-            return queries[:3]  # Limit to 3 total queries
+            result = queries[:3]  # Limit to 3 total queries
+            
+            elapsed = time.perf_counter() - start_time
+            log_timing(logger, "QUERY_EXPANSION", {
+                'duration_ms': round(elapsed * 1000, 2),
+                'expanded_count': expanded_count,
+                'total_queries': len(result)
+            })
+            
+            return result
             
         except Exception as e:
-            print(f"Query expansion failed: {e}")
+            elapsed = time.perf_counter() - start_time
+            logger.error(f"Query expansion failed: {e}")
+            log_timing(logger, "QUERY_EXPANSION", {
+                'duration_ms': round(elapsed * 1000, 2),
+                'status': 'failed'
+            })
             return [question]
     
     def enhance_query_with_domain_knowledge(self, question: str) -> str:
@@ -122,6 +165,8 @@ Alternative Questions:
     
     def preprocess_question(self, question: str, chat_history: List = None) -> dict:
         """Complete question preprocessing pipeline"""
+        pipeline_start = time.perf_counter()
+        
         # Step 1: Create standalone question if needed
         if chat_history:
             standalone_question = self.create_standalone_question(question, chat_history)
@@ -133,6 +178,13 @@ Alternative Questions:
         
         # Step 3: Generate alternative phrasings
         expanded_queries = self.expand_query(enhanced_question)
+        
+        pipeline_elapsed = time.perf_counter() - pipeline_start
+        log_timing(logger, "FULL_PREPROCESSING", {
+            'duration_ms': round(pipeline_elapsed * 1000, 2),
+            'has_history': chat_history is not None,
+            'expanded_queries': len(expanded_queries)
+        })
         
         return {
             'original_question': question,
