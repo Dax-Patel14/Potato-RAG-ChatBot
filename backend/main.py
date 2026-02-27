@@ -11,6 +11,7 @@ import asyncio
 import threading
 import time
 import logging
+import json
 
 from backend.config import CORS_ORIGINS, API_HOST, API_PORT, DATABASE_TYPE, DEBUG
 from backend.schemas import (
@@ -299,24 +300,33 @@ async def send_message(chat_id: str, message: MessageCreate):
         ai_response = result.get("answer", "")
         source_docs = result.get("source_documents", [])
         
-        # Serialize source documents to JSON-friendly structure
+        # Serialize source documents to JSON-friendly structure (force JSON-safe types)
         serialized_sources = []
         for doc in source_docs:
             try:
-                src = doc.metadata.get('source', None) if hasattr(doc, 'metadata') else None
-                meta = doc.metadata if hasattr(doc, 'metadata') else {}
+                raw_meta = doc.metadata if hasattr(doc, 'metadata') else {}
+                src = raw_meta.get('source', None)
                 page_content = doc.page_content if hasattr(doc, 'page_content') else str(doc)
+                if src is not None:
+                    src = str(src)
+                safe_meta = {}
+                for k, v in (raw_meta or {}).items():
+                    try:
+                        json.dumps(v)
+                        safe_meta[str(k)] = v
+                    except (TypeError, ValueError):
+                        safe_meta[str(k)] = str(v)
             except Exception:
                 src = None
-                meta = {}
+                safe_meta = {}
                 page_content = str(doc)
 
             serialized_sources.append({
                 "source": src,
                 "page_content": page_content,
-                "metadata": meta
+                "metadata": safe_meta
             })
-        
+
         # Add AI message to database
         db_ai_start = time.perf_counter()
         add_message(chat_id, "assistant", ai_response, metadata={"source_documents": serialized_sources})
@@ -420,6 +430,10 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
             source_docs = []
             first_chunk_time = None
             chunk_count = 0
+            # Initialize here so it is always defined even if the stream errors out
+            # before the 'complete' message arrives — previously caused UnboundLocalError
+            # which silently dropped the AI message from the database on every error.
+            serialized_sources = []
 
             # Use an asyncio.Queue to receive chunks from a background thread.
             queue: asyncio.Queue = asyncio.Queue()
@@ -461,22 +475,36 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                         source_docs = stream_output.get('source_documents', [])
                         total_stream_elapsed = time.perf_counter() - stream_start
 
-                        # Serialize source documents to JSON-friendly structure
+                        # Serialize source documents to JSON-friendly structure.
+                        # Force every metadata value to a JSON-safe type so that
+                        # json.dumps() in add_message() never silently drops sources
+                        # (e.g. PurePosixPath objects are not serializable by default).
                         serialized_sources = []
                         for doc in source_docs:
                             try:
-                                src = doc.metadata.get('source', None) if hasattr(doc, 'metadata') else None
-                                meta = doc.metadata if hasattr(doc, 'metadata') else {}
+                                raw_meta = doc.metadata if hasattr(doc, 'metadata') else {}
+                                src = raw_meta.get('source', None)
                                 page_content = doc.page_content if hasattr(doc, 'page_content') else str(doc)
+                                # Convert source path to plain string
+                                if src is not None:
+                                    src = str(src)
+                                # Sanitize every metadata value to be JSON-serializable
+                                safe_meta = {}
+                                for k, v in (raw_meta or {}).items():
+                                    try:
+                                        json.dumps(v)
+                                        safe_meta[str(k)] = v
+                                    except (TypeError, ValueError):
+                                        safe_meta[str(k)] = str(v)
                             except Exception:
                                 src = None
-                                meta = {}
+                                safe_meta = {}
                                 page_content = str(doc)
 
                             serialized_sources.append({
                                 "source": src,
                                 "page_content": page_content,
-                                "metadata": meta
+                                "metadata": safe_meta
                             })
 
                         log_timing(api_logger, "STREAMING_COMPLETE", {

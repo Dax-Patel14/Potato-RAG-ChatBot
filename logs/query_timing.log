@@ -33,3 +33,480 @@
 2026-02-22 12:21:43,235 | INFO     | api             | TOTAL_TIME | 139323.25ms
 2026-02-22 12:21:43,236 | INFO     | api             | ====================================================================================================
 2026-02-22 12:21:43,239 | INFO     | api             | WebSocket client disconnected - request_id=e0ae22be
+2026-02-22 13:40:19,554 | INFO     | api             | ====================================================================================================
+2026-02-22 13:40:19,554 | INFO     | api             | QUERY_START | ID: 47bd70e1 | Question: which fertilizer to use for B, Ca, Zn, Mg, S...
+2026-02-22 13:40:19,554 | INFO     | api             | ====================================================================================================
+2026-02-22 13:40:19,558 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.13ms
+2026-02-22 13:40:19,561 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 1.58ms | history_items=1
+2026-02-22 13:40:19,561 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.12ms | history_items=1
+2026-02-22 13:41:05,706 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 2030.58ms | docs_retrieved=14
+2026-02-22 13:41:05,708 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.97ms | docs_processed=14 | docs_returned=8
+2026-02-22 13:41:05,708 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=2032.2 | methods=ensemble
+2026-02-22 13:41:15,188 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 55621.86ms | chunk_count=412 | answer_length=1772
+2026-02-22 13:41:15,188 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=55626.82 | chunks=412 | tokens=275
+2026-02-22 13:41:15,189 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 55627.71ms | chunks=412 | response_length=1772 | first_chunk_ms=47829.18
+2026-02-22 13:41:15,194 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 4.55ms | response_length=1772
+2026-02-22 13:41:15,194 | INFO     | api             | ====================================================================================================
+2026-02-22 13:41:15,195 | INFO     | api             | QUERY_COMPLETE | ID: 47bd70e1 | Status: SUCCESS
+2026-02-22 13:41:15,196 | INFO     | api             | TOTAL_TIME | 55642.27ms
+2026-02-22 13:41:15,196 | INFO     | api             | ====================================================================================================
+2026-02-22 13:41:15,199 | INFO     | api             | WebSocket client disconnected - request_id=47bd70e1
+2026-02-22 13:41:55,088 | INFO     | api             | ====================================================================================================
+2026-02-22 13:41:55,089 | INFO     | api             | QUERY_START | ID: 8ed51028 | Question: Symptoms of lack of Mg and S in potato?...
+2026-02-22 13:41:55,089 | INFO     | api             | ====================================================================================================
+2026-02-22 13:41:55,093 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.31ms
+2026-02-22 13:41:55,097 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.76ms | history_items=2
+2026-02-22 13:41:55,098 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.16ms | history_items=2
+2026-02-22 13:41:56,602 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 287.7ms | docs_retrieved=11
+2026-02-22 13:41:56,603 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.36ms | docs_processed=11 | docs_returned=8
+2026-02-22 13:41:56,604 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=288.94 | methods=ensemble
+2026-02-22 13:42:06,763 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 11662.95ms | chunk_count=339 | answer_length=1672
+2026-02-22 13:42:06,763 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=11666.03 | chunks=339 | tokens=244
+2026-02-22 13:42:06,764 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 11666.84ms | chunks=339 | response_length=1672 | first_chunk_ms=2192.94
+2026-02-22 13:42:06,769 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 4.62ms | response_length=1672
+2026-02-22 13:42:06,770 | INFO     | api             | ====================================================================================================
+2026-02-22 13:42:06,770 | INFO     | api             | QUERY_COMPLETE | ID: 8ed51028 | Status: SUCCESS
+2026-02-22 13:42:06,770 | INFO     | api             | TOTAL_TIME | 11682.59ms
+2026-02-22 13:42:06,770 | INFO     | api             | ====================================================================================================
+2026-02-22 13:42:06,773 | INFO     | api             | WebSocket client disconnected - request_id=8ed51028
+2026-02-22 15:06:10,569 | INFO     | api             | ====================================================================================================
+2026-02-22 15:06:10,569 | INFO     | api             | QUERY_START | ID: 20c984c5 | Question: Explain reason behind leaves falling after 30 days of plantation?...
+2026-02-22 15:06:10,570 | INFO     | api             | ====================================================================================================
+2026-02-22 15:06:10,575 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.61ms
+2026-02-22 15:06:10,577 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 1.8ms | history_items=0
+2026-02-22 15:06:13,493 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 2914.18ms | docs_retrieved=14
+2026-02-22 15:06:13,495 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 2.2ms | docs_processed=14 | docs_returned=8
+2026-02-22 15:06:13,496 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=2917.15 | methods=ensemble
+2026-02-22 15:06:22,894 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 12315.47ms | chunk_count=384 | answer_length=2056
+2026-02-22 15:06:22,895 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=12316.9 | chunks=384 | tokens=299
+2026-02-22 15:06:22,895 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 12317.89ms | chunks=384 | response_length=2056 | first_chunk_ms=5613.93
+2026-02-22 15:06:22,901 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.28ms | response_length=2056
+2026-02-22 15:06:22,902 | INFO     | api             | ====================================================================================================
+2026-02-22 15:06:22,902 | INFO     | api             | QUERY_COMPLETE | ID: 20c984c5 | Status: SUCCESS
+2026-02-22 15:06:22,903 | INFO     | api             | TOTAL_TIME | 12334.78ms
+2026-02-22 15:06:22,903 | INFO     | api             | ====================================================================================================
+2026-02-22 15:06:22,907 | INFO     | api             | WebSocket client disconnected - request_id=20c984c5
+2026-02-22 15:07:33,198 | INFO     | api             | ====================================================================================================
+2026-02-22 15:07:33,199 | INFO     | api             | QUERY_START | ID: d3b0af69 | Question: Pest Infestation eloborate more...
+2026-02-22 15:07:33,199 | INFO     | api             | ====================================================================================================
+2026-02-22 15:07:33,205 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.41ms
+2026-02-22 15:07:33,207 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.27ms | history_items=1
+2026-02-22 15:07:33,208 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.11ms | history_items=1
+2026-02-22 15:07:37,616 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 2723.17ms | docs_retrieved=15
+2026-02-22 15:07:37,616 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.39ms | docs_processed=15 | docs_returned=8
+2026-02-22 15:07:37,617 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=2724.26 | methods=ensemble
+2026-02-22 15:07:45,800 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 12588.45ms | chunk_count=411 | answer_length=2325
+2026-02-22 15:07:45,801 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=12592.34 | chunks=411 | tokens=318
+2026-02-22 15:07:45,801 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 12593.48ms | chunks=411 | response_length=2325 | first_chunk_ms=5602.1
+2026-02-22 15:07:45,807 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 4.61ms | response_length=2325
+2026-02-22 15:07:45,807 | INFO     | api             | ====================================================================================================
+2026-02-22 15:07:45,807 | INFO     | api             | QUERY_COMPLETE | ID: d3b0af69 | Status: SUCCESS
+2026-02-22 15:07:45,808 | INFO     | api             | TOTAL_TIME | 12610.44ms
+2026-02-22 15:07:45,808 | INFO     | api             | ====================================================================================================
+2026-02-22 15:07:45,813 | INFO     | api             | WebSocket client disconnected - request_id=d3b0af69
+2026-02-23 18:38:32,414 | INFO     | api             | ====================================================================================================
+2026-02-23 18:38:32,415 | INFO     | api             | QUERY_START | ID: f3d9471d | Question: What are the reasons of scab in potato tuber?...
+2026-02-23 18:38:32,415 | INFO     | api             | ====================================================================================================
+2026-02-23 18:38:32,420 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 3.88ms
+2026-02-23 18:38:32,424 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.02ms | history_items=0
+2026-02-23 18:38:32,428 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.02ms | enhancements=1 | applied_domains=scab
+2026-02-23 18:38:36,003 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 3574.4ms | docs_retrieved=13
+2026-02-23 18:38:36,005 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 1.79ms | docs_processed=13 | docs_returned=8
+2026-02-23 18:38:36,006 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=3578.41 | methods=ensemble
+2026-02-23 18:38:46,675 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 14246.97ms | chunk_count=320 | answer_length=1446
+2026-02-23 18:38:46,676 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=14250.49 | chunks=320 | tokens=222
+2026-02-23 18:38:46,677 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 14252.18ms | chunks=320 | response_length=1446 | first_chunk_ms=5924.21
+2026-02-23 18:38:46,688 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 8.63ms | response_length=1446
+2026-02-23 18:38:46,690 | INFO     | api             | ====================================================================================================
+2026-02-23 18:38:46,691 | INFO     | api             | QUERY_COMPLETE | ID: f3d9471d | Status: SUCCESS
+2026-02-23 18:38:46,693 | INFO     | api             | TOTAL_TIME | 14278.81ms
+2026-02-23 18:38:46,694 | INFO     | api             | ====================================================================================================
+2026-02-23 18:38:46,710 | INFO     | api             | WebSocket client disconnected - request_id=f3d9471d
+2026-02-23 18:39:30,293 | INFO     | api             | ====================================================================================================
+2026-02-23 18:39:30,294 | INFO     | api             | QUERY_START | ID: 14597701 | Question: How to manage it?...
+2026-02-23 18:39:30,294 | INFO     | api             | ====================================================================================================
+2026-02-23 18:39:30,298 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 3.73ms
+2026-02-23 18:39:30,303 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.99ms | history_items=1
+2026-02-23 18:39:30,304 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.15ms | history_items=1
+2026-02-23 18:40:14,235 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=scab
+2026-02-23 18:40:56,746 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 42509.85ms | docs_retrieved=15
+2026-02-23 18:40:56,747 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.7ms | docs_processed=15 | docs_returned=8
+2026-02-23 18:40:56,747 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=42511.97 | methods=ensemble
+2026-02-23 18:41:49,934 | ERROR    | generation      | Token stream error from chain thread: [WinError 10053] An established connection was aborted by the software in your host machine
+2026-02-23 18:41:49,987 | INFO     | api             | ====================================================================================================
+2026-02-23 18:41:50,007 | INFO     | api             | QUERY_COMPLETE | ID: 14597701 | Status: FAILED: UnboundLocalError
+2026-02-23 18:41:50,007 | INFO     | api             | TOTAL_TIME | 139695.51ms
+2026-02-23 18:41:50,018 | INFO     | api             | ====================================================================================================
+2026-02-23 18:41:50,030 | INFO     | api             | WebSocket client disconnected - request_id=14597701
+2026-02-23 18:42:33,266 | INFO     | api             | ====================================================================================================
+2026-02-23 18:42:33,267 | INFO     | api             | QUERY_START | ID: 004ce05e | Question: How to manage it?...
+2026-02-23 18:42:33,267 | INFO     | api             | ====================================================================================================
+2026-02-23 18:42:33,279 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 11.61ms
+2026-02-23 18:42:33,284 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.13ms | history_items=1
+2026-02-23 18:42:33,286 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.59ms | history_items=1
+2026-02-23 18:42:34,653 | ERROR    | generation      | Token stream error from chain thread: Connection error.
+2026-02-23 18:42:34,654 | INFO     | api             | ====================================================================================================
+2026-02-23 18:42:34,654 | INFO     | api             | QUERY_COMPLETE | ID: 004ce05e | Status: FAILED: UnboundLocalError
+2026-02-23 18:42:34,655 | INFO     | api             | TOTAL_TIME | 1390.19ms
+2026-02-23 18:42:34,656 | INFO     | api             | ====================================================================================================
+2026-02-23 18:42:34,658 | INFO     | api             | WebSocket client disconnected - request_id=004ce05e
+2026-02-23 18:42:43,277 | INFO     | api             | ====================================================================================================
+2026-02-23 18:42:43,278 | INFO     | api             | QUERY_START | ID: 12c16be2 | Question: How to manage it?...
+2026-02-23 18:42:43,279 | INFO     | api             | ====================================================================================================
+2026-02-23 18:42:43,291 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 12.25ms
+2026-02-23 18:42:43,295 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.01ms | history_items=2
+2026-02-23 18:42:43,297 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.23ms | history_items=2
+2026-02-23 18:42:44,803 | ERROR    | generation      | Token stream error from chain thread: Connection error.
+2026-02-23 18:42:44,805 | INFO     | api             | ====================================================================================================
+2026-02-23 18:42:44,806 | INFO     | api             | QUERY_COMPLETE | ID: 12c16be2 | Status: FAILED: UnboundLocalError
+2026-02-23 18:42:44,806 | INFO     | api             | TOTAL_TIME | 1531.35ms
+2026-02-23 18:42:44,806 | INFO     | api             | ====================================================================================================
+2026-02-23 18:42:44,808 | INFO     | api             | WebSocket client disconnected - request_id=12c16be2
+2026-02-23 18:43:22,052 | INFO     | api             | ====================================================================================================
+2026-02-23 18:43:22,053 | INFO     | api             | QUERY_START | ID: eeba3621 | Question: explain fungal disease in potato?...
+2026-02-23 18:43:22,053 | INFO     | api             | ====================================================================================================
+2026-02-23 18:43:22,064 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 10.42ms
+2026-02-23 18:43:22,067 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.23ms | history_items=0
+2026-02-23 18:43:23,371 | ERROR    | generation      | Token stream error from chain thread: Connection error.
+2026-02-23 18:43:23,373 | INFO     | api             | ====================================================================================================
+2026-02-23 18:43:23,373 | INFO     | api             | QUERY_COMPLETE | ID: eeba3621 | Status: FAILED: UnboundLocalError
+2026-02-23 18:43:23,374 | INFO     | api             | TOTAL_TIME | 1322.38ms
+2026-02-23 18:43:23,375 | INFO     | api             | ====================================================================================================
+2026-02-23 18:43:23,377 | INFO     | api             | WebSocket client disconnected - request_id=eeba3621
+2026-02-23 18:44:17,594 | INFO     | api             | ====================================================================================================
+2026-02-23 18:44:17,594 | INFO     | api             | QUERY_START | ID: 1f3d876f | Question: explain fungal disease in potato?...
+2026-02-23 18:44:17,595 | INFO     | api             | ====================================================================================================
+2026-02-23 18:44:17,618 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 13.5ms
+2026-02-23 18:44:17,630 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 4.67ms | history_items=0
+2026-02-23 18:44:50,487 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 3193.97ms | docs_retrieved=14
+2026-02-23 18:44:50,489 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 1.58ms | docs_processed=14 | docs_returned=8
+2026-02-23 18:44:50,490 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=3197.27 | methods=ensemble
+2026-02-23 18:45:03,461 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 45802.86ms | chunk_count=596 | answer_length=2773
+2026-02-23 18:45:03,462 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=45817.27 | chunks=596 | tokens=378
+2026-02-23 18:45:03,462 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 45824.02ms | chunks=596 | response_length=2773 | first_chunk_ms=33451.93
+2026-02-23 18:45:03,470 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.44ms | response_length=2773
+2026-02-23 18:45:03,470 | INFO     | api             | ====================================================================================================
+2026-02-23 18:45:03,471 | INFO     | api             | QUERY_COMPLETE | ID: 1f3d876f | Status: SUCCESS
+2026-02-23 18:45:03,471 | INFO     | api             | TOTAL_TIME | 45886.66ms
+2026-02-23 18:45:03,472 | INFO     | api             | ====================================================================================================
+2026-02-23 18:45:03,491 | INFO     | api             | WebSocket client disconnected - request_id=1f3d876f
+2026-02-23 18:45:23,445 | INFO     | api             | ====================================================================================================
+2026-02-23 18:45:23,445 | INFO     | api             | QUERY_START | ID: 76369dcf | Question: how to manage  Black Scurf ?...
+2026-02-23 18:45:23,446 | INFO     | api             | ====================================================================================================
+2026-02-23 18:45:23,452 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.77ms
+2026-02-23 18:45:23,457 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.98ms | history_items=1
+2026-02-23 18:45:23,459 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.27ms | history_items=1
+2026-02-23 18:46:49,846 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 43167.6ms | docs_retrieved=10
+2026-02-23 18:46:49,848 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 1.01ms | docs_processed=10 | docs_returned=8
+2026-02-23 18:46:49,848 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=43170.26 | methods=ensemble
+2026-02-23 18:46:58,707 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 95242.08ms | chunk_count=417 | answer_length=2016
+2026-02-23 18:46:58,708 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=95249.04 | chunks=417 | tokens=294
+2026-02-23 18:46:58,708 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 95250.29ms | chunks=417 | response_length=2016 | first_chunk_ms=87153.71
+2026-02-23 18:46:58,716 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 6.32ms | response_length=2016
+2026-02-23 18:46:58,717 | INFO     | api             | ====================================================================================================
+2026-02-23 18:46:58,717 | INFO     | api             | QUERY_COMPLETE | ID: 76369dcf | Status: SUCCESS
+2026-02-23 18:46:58,718 | INFO     | api             | TOTAL_TIME | 95274.15ms
+2026-02-23 18:46:58,718 | INFO     | api             | ====================================================================================================
+2026-02-23 18:46:58,727 | INFO     | api             | WebSocket client disconnected - request_id=76369dcf
+2026-02-23 18:49:20,374 | INFO     | api             | ====================================================================================================
+2026-02-23 18:49:20,375 | INFO     | api             | QUERY_START | ID: 57f75a5f | Question: can B and Ca defficiency lead to this problem?...
+2026-02-23 18:49:20,375 | INFO     | api             | ====================================================================================================
+2026-02-23 18:49:20,381 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.2ms
+2026-02-23 18:49:20,387 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 4.2ms | history_items=1
+2026-02-23 18:49:20,388 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.22ms | history_items=1
+2026-02-23 18:50:04,308 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 679.94ms | docs_retrieved=10
+2026-02-23 18:50:04,310 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 1.13ms | docs_processed=10 | docs_returned=8
+2026-02-23 18:50:04,311 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=682.74 | methods=ensemble
+2026-02-23 18:50:11,115 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 50719.1ms | chunk_count=314 | answer_length=1689
+2026-02-23 18:50:11,116 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=50727.94 | chunks=314 | tokens=252
+2026-02-23 18:50:11,117 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 50729.26ms | chunks=314 | response_length=1689 | first_chunk_ms=44679.82
+2026-02-23 18:50:11,128 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 8.51ms | response_length=1689
+2026-02-23 18:50:11,128 | INFO     | api             | ====================================================================================================
+2026-02-23 18:50:11,129 | INFO     | api             | QUERY_COMPLETE | ID: 57f75a5f | Status: SUCCESS
+2026-02-23 18:50:11,130 | INFO     | api             | TOTAL_TIME | 50754.99ms
+2026-02-23 18:50:11,131 | INFO     | api             | ====================================================================================================
+2026-02-23 18:50:11,144 | INFO     | api             | WebSocket client disconnected - request_id=57f75a5f
+2026-02-23 19:12:08,291 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-02-23 19:12:09,443 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1139.06ms | docs_retrieved=15
+2026-02-23 19:12:09,444 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.51ms | docs_processed=15 | docs_returned=8
+2026-02-23 19:12:09,445 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1140.54 | methods=ensemble
+2026-02-23 19:12:17,129 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 8824.39ms | chunk_count=355 | answer_length=1804
+2026-02-23 19:12:17,129 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=8838.1 | chunks=355 | tokens=266
+2026-02-23 19:13:09,772 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.15ms | history_items=1
+2026-02-23 19:13:09,774 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 19:13:10,851 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1076.52ms
+2026-02-23 19:13:11,794 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 942.36ms | docs_retrieved=15
+2026-02-23 19:13:11,795 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.5ms | docs_processed=15 | docs_returned=8
+2026-02-23 19:13:11,795 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=943.71 | methods=ensemble
+2026-02-23 19:13:18,879 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 9104.06ms | chunk_count=391 | answer_length=2109
+2026-02-23 19:13:18,879 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=9107.23 | chunks=391 | tokens=299
+2026-02-23 19:14:40,097 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.12ms | history_items=2
+2026-02-23 19:14:40,099 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 19:14:41,668 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1569.69ms
+2026-02-23 19:14:41,669 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.03ms | enhancements=1 | applied_domains=scab
+2026-02-23 19:14:42,042 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 372.87ms | docs_retrieved=14
+2026-02-23 19:14:42,043 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.35ms | docs_processed=14 | docs_returned=8
+2026-02-23 19:14:42,043 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=374.33 | methods=ensemble
+2026-02-23 19:14:51,142 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 11043.64ms | chunk_count=343 | answer_length=1644
+2026-02-23 19:14:51,143 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=11045.36 | chunks=343 | tokens=255
+2026-02-23 19:30:19,487 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.11ms | history_items=2
+2026-02-23 19:30:19,489 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 19:30:20,788 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1299.16ms
+2026-02-23 19:30:21,885 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1095.67ms | docs_retrieved=14
+2026-02-23 19:30:21,886 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.58ms | docs_processed=14 | docs_returned=8
+2026-02-23 19:30:21,886 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1096.97 | methods=ensemble
+2026-02-23 19:30:21,886 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 19:30:32,681 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 19:30:35,435 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 2754.44ms
+2026-02-23 19:30:35,436 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 15946.79ms | chunk_count=436 | answer_length=2173
+2026-02-23 19:30:35,436 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=15949.82 | chunks=436 | tokens=328
+2026-02-23 19:30:35,437 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 19:51:26,869 | INFO     | api             | ====================================================================================================
+2026-02-23 19:51:26,870 | INFO     | api             | QUERY_START | ID: 27d24495 | Question: which fertilizer to use?...
+2026-02-23 19:51:26,870 | INFO     | api             | ====================================================================================================
+2026-02-23 19:51:26,876 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.34ms
+2026-02-23 19:51:26,878 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.12ms | history_items=3
+2026-02-23 19:51:26,879 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.26ms | history_items=3
+2026-02-23 19:51:26,881 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 19:52:09,908 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 43026.89ms
+2026-02-23 19:52:11,094 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1185.73ms | docs_retrieved=14
+2026-02-23 19:52:11,095 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.54ms | docs_processed=14 | docs_returned=8
+2026-02-23 19:52:11,096 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1187.2 | methods=ensemble
+2026-02-23 19:52:11,096 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 19:52:26,966 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 19:52:30,642 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 3675.21ms
+2026-02-23 19:52:30,642 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 63761.43ms | chunk_count=556 | answer_length=2536
+2026-02-23 19:52:30,643 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=63763.78 | chunks=556 | tokens=351
+2026-02-23 19:52:30,643 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 19:52:30,644 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 63765.16ms | chunks=556 | response_length=2536 | first_chunk_ms=45229.8
+2026-02-23 19:52:30,650 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.52ms | response_length=2536
+2026-02-23 19:52:30,651 | INFO     | api             | ====================================================================================================
+2026-02-23 19:52:30,651 | INFO     | api             | QUERY_COMPLETE | ID: 27d24495 | Status: SUCCESS
+2026-02-23 19:52:30,651 | INFO     | api             | TOTAL_TIME | 63782.7ms
+2026-02-23 19:52:30,651 | INFO     | api             | ====================================================================================================
+2026-02-23 19:52:30,656 | INFO     | api             | WebSocket client disconnected - request_id=27d24495
+2026-02-23 19:57:14,521 | INFO     | api             | ====================================================================================================
+2026-02-23 19:57:14,521 | INFO     | api             | QUERY_START | ID: 107f113d | Question: which fertilizer to use for Mg and S?
+...
+2026-02-23 19:57:14,521 | INFO     | api             | ====================================================================================================
+2026-02-23 19:57:14,527 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.07ms
+2026-02-23 19:57:14,529 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 1.85ms | history_items=3
+2026-02-23 19:57:14,531 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.32ms | history_items=3
+2026-02-23 19:57:14,533 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 19:57:15,508 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 975.63ms
+2026-02-23 19:57:16,471 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 962.27ms | docs_retrieved=12
+2026-02-23 19:57:16,472 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.35ms | docs_processed=12 | docs_returned=8
+2026-02-23 19:57:16,472 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=963.28 | methods=ensemble
+2026-02-23 19:57:16,473 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 19:57:28,280 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 19:57:32,348 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 4068.61ms
+2026-02-23 19:57:32,349 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 17816.66ms | chunk_count=454 | answer_length=2042
+2026-02-23 19:57:32,350 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=17819.75 | chunks=454 | tokens=289
+2026-02-23 19:57:32,350 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 19:57:32,351 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 17821.55ms | chunks=454 | response_length=2042 | first_chunk_ms=2989.52
+2026-02-23 19:57:32,357 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.24ms | response_length=2042
+2026-02-23 19:57:32,358 | INFO     | api             | ====================================================================================================
+2026-02-23 19:57:32,358 | INFO     | api             | QUERY_COMPLETE | ID: 107f113d | Status: SUCCESS
+2026-02-23 19:57:32,358 | INFO     | api             | TOTAL_TIME | 17838.09ms
+2026-02-23 19:57:32,358 | INFO     | api             | ====================================================================================================
+2026-02-23 19:57:32,362 | INFO     | api             | WebSocket client disconnected - request_id=107f113d
+2026-02-23 20:00:04,500 | INFO     | api             | ====================================================================================================
+2026-02-23 20:00:04,501 | INFO     | api             | QUERY_START | ID: 1e698583 | Question: What are the different fungal disease can affect potato?...
+2026-02-23 20:00:04,501 | INFO     | api             | ====================================================================================================
+2026-02-23 20:00:04,506 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.26ms
+2026-02-23 20:00:04,508 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 1.6ms | history_items=0
+2026-02-23 20:00:04,509 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-02-23 20:00:47,120 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 42610.48ms | docs_retrieved=14
+2026-02-23 20:00:47,121 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.43ms | docs_processed=14 | docs_returned=8
+2026-02-23 20:00:47,121 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=42611.75 | methods=ensemble
+2026-02-23 20:00:47,122 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 20:01:00,060 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 55549.94ms | chunk_count=483 | answer_length=2301
+2026-02-23 20:01:00,060 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=55551.55 | chunks=483 | tokens=317
+2026-02-23 20:01:00,061 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 20:01:00,061 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 55552.74ms | chunks=483 | response_length=2301 | first_chunk_ms=43505.65
+2026-02-23 20:01:00,066 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 3.58ms | response_length=2301
+2026-02-23 20:01:00,066 | INFO     | api             | ====================================================================================================
+2026-02-23 20:01:00,066 | INFO     | api             | QUERY_COMPLETE | ID: 1e698583 | Status: SUCCESS
+2026-02-23 20:01:00,066 | INFO     | api             | TOTAL_TIME | 55566.94ms
+2026-02-23 20:01:00,066 | INFO     | api             | ====================================================================================================
+2026-02-23 20:01:00,067 | INFO     | api             | WebSocket client disconnected - request_id=1e698583
+2026-02-23 20:01:32,711 | INFO     | api             | ====================================================================================================
+2026-02-23 20:01:32,711 | INFO     | api             | QUERY_START | ID: 3aefe620 | Question: how to manage it?...
+2026-02-23 20:01:32,712 | INFO     | api             | ====================================================================================================
+2026-02-23 20:01:32,716 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.15ms
+2026-02-23 20:01:32,719 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.33ms | history_items=1
+2026-02-23 20:01:32,720 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.13ms | history_items=1
+2026-02-23 20:01:32,722 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 20:02:16,196 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 43474.55ms
+2026-02-23 20:02:58,580 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 42383.14ms | docs_retrieved=14
+2026-02-23 20:02:58,581 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.35ms | docs_processed=14 | docs_returned=8
+2026-02-23 20:02:58,581 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=42384.17 | methods=ensemble
+2026-02-23 20:02:58,581 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 20:03:08,353 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 95631.73ms | chunk_count=425 | answer_length=2261
+2026-02-23 20:03:08,354 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=95634.25 | chunks=425 | tokens=302
+2026-02-23 20:03:08,354 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 20:03:08,354 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 95635.11ms | chunks=425 | response_length=2261 | first_chunk_ms=87296.01
+2026-02-23 20:03:08,361 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.03ms | response_length=2261
+2026-02-23 20:03:08,361 | INFO     | api             | ====================================================================================================
+2026-02-23 20:03:08,361 | INFO     | api             | QUERY_COMPLETE | ID: 3aefe620 | Status: SUCCESS
+2026-02-23 20:03:08,361 | INFO     | api             | TOTAL_TIME | 95650.79ms
+2026-02-23 20:03:08,361 | INFO     | api             | ====================================================================================================
+2026-02-23 20:03:08,363 | INFO     | api             | WebSocket client disconnected - request_id=3aefe620
+2026-02-23 20:04:13,207 | INFO     | api             | ====================================================================================================
+2026-02-23 20:04:13,208 | INFO     | api             | QUERY_START | ID: 6d7f3d63 | Question: explain late blight vs early blight?...
+2026-02-23 20:04:13,208 | INFO     | api             | ====================================================================================================
+2026-02-23 20:04:13,214 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.54ms
+2026-02-23 20:04:13,217 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.46ms | history_items=2
+2026-02-23 20:04:13,218 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.16ms | history_items=2
+2026-02-23 20:04:13,219 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 20:04:56,204 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 42985.17ms
+2026-02-23 20:04:56,205 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=2 | applied_domains=late blight,early blight
+2026-02-23 20:05:43,756 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 47550.48ms | docs_retrieved=15
+2026-02-23 20:05:43,757 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.44ms | docs_processed=15 | docs_returned=8
+2026-02-23 20:05:43,757 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=47552.22 | methods=ensemble
+2026-02-23 20:05:43,757 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 20:06:06,814 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 20:06:10,824 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 4009.67ms
+2026-02-23 20:06:10,824 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 117605.46ms | chunk_count=580 | answer_length=2766
+2026-02-23 20:06:10,825 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=117607.1 | chunks=580 | tokens=405
+2026-02-23 20:06:10,825 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 20:06:10,826 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 117608.39ms | chunks=580 | response_length=2766 | first_chunk_ms=100079.48
+2026-02-23 20:06:10,832 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.18ms | response_length=2766
+2026-02-23 20:06:10,832 | INFO     | api             | ====================================================================================================
+2026-02-23 20:06:10,832 | INFO     | api             | QUERY_COMPLETE | ID: 6d7f3d63 | Status: SUCCESS
+2026-02-23 20:06:10,833 | INFO     | api             | TOTAL_TIME | 117626.56ms
+2026-02-23 20:06:10,833 | INFO     | api             | ====================================================================================================
+2026-02-23 20:06:10,834 | INFO     | api             | WebSocket client disconnected - request_id=6d7f3d63
+2026-02-23 20:07:22,066 | INFO     | api             | ====================================================================================================
+2026-02-23 20:07:22,066 | INFO     | api             | QUERY_START | ID: 2c23f625 | Question: which fungicide to be use to treat both?...
+2026-02-23 20:07:22,067 | INFO     | api             | ====================================================================================================
+2026-02-23 20:07:22,071 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.6ms
+2026-02-23 20:07:22,074 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.36ms | history_items=3
+2026-02-23 20:07:22,075 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.11ms | history_items=3
+2026-02-23 20:07:22,077 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 20:07:59,266 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 37189.39ms
+2026-02-23 20:07:59,269 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=2 | applied_domains=late blight,early blight
+2026-02-23 20:07:59,888 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 617.85ms | docs_retrieved=14
+2026-02-23 20:07:59,889 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.4ms | docs_processed=14 | docs_returned=8
+2026-02-23 20:07:59,889 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=620.3 | methods=ensemble
+2026-02-23 20:07:59,889 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 20:08:07,860 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 20:08:13,351 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 5491.58ms
+2026-02-23 20:08:13,352 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 51275.01ms | chunk_count=401 | answer_length=1918
+2026-02-23 20:08:13,352 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=51277.23 | chunks=401 | tokens=261
+2026-02-23 20:08:13,353 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 20:08:13,353 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 51278.7ms | chunks=401 | response_length=1918 | first_chunk_ms=38706.27
+2026-02-23 20:08:13,359 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.26ms | response_length=1918
+2026-02-23 20:08:13,360 | INFO     | api             | ====================================================================================================
+2026-02-23 20:08:13,360 | INFO     | api             | QUERY_COMPLETE | ID: 2c23f625 | Status: SUCCESS
+2026-02-23 20:08:13,360 | INFO     | api             | TOTAL_TIME | 51294.75ms
+2026-02-23 20:08:13,360 | INFO     | api             | ====================================================================================================
+2026-02-23 20:08:13,362 | INFO     | api             | WebSocket client disconnected - request_id=2c23f625
+2026-02-23 20:36:35,706 | INFO     | api             | ====================================================================================================
+2026-02-23 20:36:35,706 | INFO     | api             | QUERY_START | ID: 4129ba42 | Question: I found uneven shapes in potato tuber what could be the reason?...
+2026-02-23 20:36:35,706 | INFO     | api             | ====================================================================================================
+2026-02-23 20:36:35,712 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.28ms
+2026-02-23 20:36:35,717 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.89ms | history_items=0
+2026-02-23 20:36:35,718 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-02-23 20:36:45,086 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 9366.31ms | docs_retrieved=14
+2026-02-23 20:36:45,087 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.63ms | docs_processed=14 | docs_returned=8
+2026-02-23 20:36:45,088 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=9367.85 | methods=ensemble
+2026-02-23 20:36:45,088 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 20:36:52,170 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 16450.35ms | chunk_count=266 | answer_length=1375
+2026-02-23 20:36:52,171 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=16452.77 | chunks=266 | tokens=204
+2026-02-23 20:36:52,171 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 20:36:52,172 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 16454.64ms | chunks=266 | response_length=1375 | first_chunk_ms=10422.5
+2026-02-23 20:36:52,180 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.56ms | response_length=1375
+2026-02-23 20:36:52,180 | INFO     | api             | ====================================================================================================
+2026-02-23 20:36:52,181 | INFO     | api             | QUERY_COMPLETE | ID: 4129ba42 | Status: SUCCESS
+2026-02-23 20:36:52,181 | INFO     | api             | TOTAL_TIME | 16475.98ms
+2026-02-23 20:36:52,181 | INFO     | api             | ====================================================================================================
+2026-02-23 20:36:52,183 | INFO     | api             | WebSocket client disconnected - request_id=4129ba42
+2026-02-23 20:37:40,734 | INFO     | api             | ====================================================================================================
+2026-02-23 20:37:40,734 | INFO     | api             | QUERY_START | ID: ac7bc549 | Question: Can nutritions defficiency lead to irregular growth?...
+2026-02-23 20:37:40,734 | INFO     | api             | ====================================================================================================
+2026-02-23 20:37:40,740 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.31ms
+2026-02-23 20:37:40,743 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 1.9ms | history_items=1
+2026-02-23 20:37:40,743 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.1ms | history_items=1
+2026-02-23 20:37:40,745 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-23 20:37:42,370 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1625.1ms
+2026-02-23 20:37:43,437 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1065.86ms | docs_retrieved=14
+2026-02-23 20:37:43,438 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.65ms | docs_processed=14 | docs_returned=8
+2026-02-23 20:37:43,438 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1067.47 | methods=ensemble
+2026-02-23 20:37:43,439 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-23 20:37:52,189 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 11444.2ms | chunk_count=333 | answer_length=1787
+2026-02-23 20:37:52,191 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=11447.51 | chunks=333 | tokens=258
+2026-02-23 20:37:52,192 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-23 20:37:52,194 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 11450.67ms | chunks=333 | response_length=1787 | first_chunk_ms=3352.65
+2026-02-23 20:37:52,202 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 6.04ms | response_length=1787
+2026-02-23 20:37:52,202 | INFO     | api             | ====================================================================================================
+2026-02-23 20:37:52,203 | INFO     | api             | QUERY_COMPLETE | ID: ac7bc549 | Status: SUCCESS
+2026-02-23 20:37:52,203 | INFO     | api             | TOTAL_TIME | 11470.06ms
+2026-02-23 20:37:52,203 | INFO     | api             | ====================================================================================================
+2026-02-23 20:37:52,209 | INFO     | api             | WebSocket client disconnected - request_id=ac7bc549
+2026-02-27 22:47:04,761 | INFO     | api             | ====================================================================================================
+2026-02-27 22:47:04,761 | INFO     | api             | QUERY_START | ID: dcb80daf | Question: During Harvesting of potato, i found green color mark on tuber surface, what cou...
+2026-02-27 22:47:04,762 | INFO     | api             | ====================================================================================================
+2026-02-27 22:47:04,768 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 6.1ms
+2026-02-27 22:47:04,773 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.17ms | history_items=0
+2026-02-27 22:47:04,775 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-02-27 22:47:08,342 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 3563.22ms | docs_retrieved=14
+2026-02-27 22:47:08,345 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 2.28ms | docs_processed=14 | docs_returned=8
+2026-02-27 22:47:08,345 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=3566.94 | methods=ensemble
+2026-02-27 22:47:08,346 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-27 22:47:14,293 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 9513.52ms | chunk_count=198 | answer_length=1029
+2026-02-27 22:47:14,293 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=9518.65 | chunks=198 | tokens=169
+2026-02-27 22:47:14,294 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-27 22:47:14,294 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 9520.92ms | chunks=198 | response_length=1029 | first_chunk_ms=6206.11
+2026-02-27 22:47:14,304 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 7.98ms | response_length=1029
+2026-02-27 22:47:14,305 | INFO     | api             | ====================================================================================================
+2026-02-27 22:47:14,305 | INFO     | api             | QUERY_COMPLETE | ID: dcb80daf | Status: SUCCESS
+2026-02-27 22:47:14,306 | INFO     | api             | TOTAL_TIME | 9549.14ms
+2026-02-27 22:47:14,307 | INFO     | api             | ====================================================================================================
+2026-02-27 22:47:14,309 | INFO     | api             | WebSocket client disconnected - request_id=dcb80daf
+2026-02-27 22:48:17,728 | INFO     | api             | ====================================================================================================
+2026-02-27 22:48:17,729 | INFO     | api             | QUERY_START | ID: a667bc78 | Question: along with that i found , crack uneven shapes of potato also...
+2026-02-27 22:48:17,730 | INFO     | api             | ====================================================================================================
+2026-02-27 22:48:17,736 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.79ms
+2026-02-27 22:48:17,740 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.2ms | history_items=1
+2026-02-27 22:48:17,741 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.1ms | history_items=1
+2026-02-27 22:48:17,744 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-27 22:48:58,159 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 40414.97ms
+2026-02-27 22:48:58,825 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 663.73ms | docs_retrieved=15
+2026-02-27 22:48:58,828 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 2.59ms | docs_processed=15 | docs_returned=8
+2026-02-27 22:48:58,829 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=668.38 | methods=ensemble
+2026-02-27 22:48:58,830 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-27 22:49:05,336 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 47592.16ms | chunk_count=340 | answer_length=1734
+2026-02-27 22:49:05,337 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=47596.31 | chunks=340 | tokens=254
+2026-02-27 22:49:05,338 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-27 22:49:05,339 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 47598.76ms | chunks=340 | response_length=1734 | first_chunk_ms=42648.75
+2026-02-27 22:49:05,348 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 6.51ms | response_length=1734
+2026-02-27 22:49:05,348 | INFO     | api             | ====================================================================================================
+2026-02-27 22:49:05,348 | INFO     | api             | QUERY_COMPLETE | ID: a667bc78 | Status: SUCCESS
+2026-02-27 22:49:05,349 | INFO     | api             | TOTAL_TIME | 47623.63ms
+2026-02-27 22:49:05,353 | INFO     | api             | ====================================================================================================
+2026-02-27 22:49:05,355 | INFO     | api             | WebSocket client disconnected - request_id=a667bc78
+2026-02-27 22:49:55,011 | INFO     | api             | ====================================================================================================
+2026-02-27 22:49:55,011 | INFO     | api             | QUERY_START | ID: 8079e6c4 | Question: how Nutrient Imbalance can lead to this problem...
+2026-02-27 22:49:55,012 | INFO     | api             | ====================================================================================================
+2026-02-27 22:49:55,019 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 7.05ms
+2026-02-27 22:49:55,023 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.0ms | history_items=2
+2026-02-27 22:49:55,024 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.12ms | history_items=2
+2026-02-27 22:49:55,026 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-27 22:49:56,258 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1232.31ms
+2026-02-27 22:49:56,623 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 363.08ms | docs_retrieved=15
+2026-02-27 22:49:56,627 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 3.66ms | docs_processed=15 | docs_returned=8
+2026-02-27 22:49:56,628 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=368.21 | methods=ensemble
+2026-02-27 22:49:56,628 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED            | count=8
+2026-02-27 22:50:07,116 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Started (rephrasing follow-up as standalone question)
+2026-02-27 22:50:11,073 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 3956.95ms
+2026-02-27 22:50:11,075 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 16049.31ms | chunk_count=450 | answer_length=2475
+2026-02-27 22:50:11,076 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=16051.95 | chunks=450 | tokens=345
+2026-02-27 22:50:11,076 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-02-27 22:50:11,078 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 16054.3ms | chunks=450 | response_length=2475 | first_chunk_ms=2186.8
+2026-02-27 22:50:11,087 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 7.4ms | response_length=2475
+2026-02-27 22:50:11,088 | INFO     | api             | ====================================================================================================
+2026-02-27 22:50:11,089 | INFO     | api             | QUERY_COMPLETE | ID: 8079e6c4 | Status: SUCCESS
+2026-02-27 22:50:11,092 | INFO     | api             | TOTAL_TIME | 16079.89ms
+2026-02-27 22:50:11,093 | INFO     | api             | ====================================================================================================
+2026-02-27 22:50:11,098 | INFO     | api             | WebSocket client disconnected - request_id=8079e6c4

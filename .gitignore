@@ -25,3 +25,6 @@ chat_history.json
 # SQLite Database
 chat_history.db
 *.db
+
+# Ignore Analysis folder
+Analysis/

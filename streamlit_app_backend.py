@@ -94,6 +94,13 @@ if "response_language" not in st.session_state:
 if "api_error" not in st.session_state:
     st.session_state.api_error = None
 
+# Persist source documents for the most recent response across st.rerun() calls.
+# Keyed by chat_id so switching chats doesn't show stale sources.
+if "pending_sources" not in st.session_state:
+    st.session_state.pending_sources = []
+if "pending_sources_chat" not in st.session_state:
+    st.session_state.pending_sources_chat = None
+
 # ==================== SIDEBAR ====================
 
 with st.sidebar:
@@ -336,9 +343,36 @@ if st.session_state.active_chat_id:
     
     except Exception as e:
         st.error(f"Failed to load messages: {str(e)}")
-    
+
+    # ---- Persistent Latest-Response Sources Panel ----
+    # source_documents saved to session_state in the complete handler survive st.rerun()
+    # so this section always shows sources for the most recent reply in this chat,
+    # even after Streamlit wipes the transient streaming widget tree.
+    _pending_docs = st.session_state.get("pending_sources", [])
+    _pending_chat = st.session_state.get("pending_sources_chat")
+    if _pending_docs and _pending_chat == active_chat_id:
+        st.markdown("---")
+        with st.expander(f"📚 Latest Response Sources ({len(_pending_docs)} found)", expanded=True):
+            for i, doc in enumerate(_pending_docs):
+                source_name = None
+                try:
+                    source_name = doc.get('source') or (
+                        doc.get('metadata', {}).get('source') if doc.get('metadata') else None
+                    )
+                except Exception:
+                    source_name = None
+                if not source_name:
+                    source_name = f"Source {i+1}"
+                st.markdown(f"**Source {i+1}:** {source_name}")
+                content_preview = (doc.get('page_content') or '')[:300].replace('\n', ' ')
+                if len(doc.get('page_content', '')) > 300:
+                    content_preview += "..."
+                st.markdown(f"> {content_preview}")
+                if i < len(_pending_docs) - 1:
+                    st.divider()
+
     st.divider()
-    
+
     # Chat Input
     col1, col2 = st.columns([5, 1])
     
@@ -356,6 +390,11 @@ if st.session_state.active_chat_id:
         with st.chat_message("user"):
             st.markdown(user_query)
         
+        # Clear sources from prior response so stale docs don't persist
+        # if the new response happens to find no relevant sources.
+        st.session_state.pending_sources = []
+        st.session_state.pending_sources_chat = active_chat_id
+
         # Get AI response
         with st.chat_message("assistant"):
             st.write("Thinking...")
@@ -381,28 +420,12 @@ if st.session_state.active_chat_id:
                             sources_count = chunk.get("sources_count", 0)
                             response_placeholder.markdown(ai_response)
 
-                            # Display source documents if provided
+                            # Save sources to session_state so the persistent
+                            # "Latest Response Sources" panel below survives st.rerun().
                             source_documents = chunk.get("source_documents", [])
                             if source_documents:
-                                st.markdown("---")
-                                with st.expander(f"📚 View Sources ({len(source_documents)} found)"):
-                                    for i, doc in enumerate(source_documents):
-                                        source_name = None
-                                        try:
-                                            source_name = doc.get('source') or (doc.get('metadata', {}).get('source') if doc.get('metadata') else None)
-                                        except Exception:
-                                            source_name = None
-
-                                        if not source_name:
-                                            source_name = f"Source {i+1}"
-
-                                        st.markdown(f"**Source {i+1}:** {source_name}")
-                                        content_preview = (doc.get('page_content') or '')[:300].replace('\n', ' ')
-                                        if len(doc.get('page_content', '')) > 300:
-                                            content_preview += "..."
-                                        st.markdown(f"> {content_preview}")
-                                        if i < len(source_documents) - 1:
-                                            st.divider()
+                                st.session_state.pending_sources = source_documents
+                                st.session_state.pending_sources_chat = active_chat_id
 
                             status_placeholder.success(f"✅ Response generated ({sources_count} sources)")
                             break
@@ -422,28 +445,12 @@ if st.session_state.active_chat_id:
                     sources_count = response.get("sources_count", 0)
 
                     response_placeholder.markdown(ai_response)
-                    # Display source documents if provided
+                    # Save sources to session_state so the persistent
+                    # "Latest Response Sources" panel below survives st.rerun().
                     source_documents = response.get("source_documents", [])
                     if source_documents:
-                        st.markdown("---")
-                        with st.expander(f"📚 View Sources ({len(source_documents)} found)"):
-                            for i, doc in enumerate(source_documents):
-                                source_name = None
-                                try:
-                                    source_name = doc.get('source') or (doc.get('metadata', {}).get('source') if doc.get('metadata') else None)
-                                except Exception:
-                                    source_name = None
-
-                                if not source_name:
-                                    source_name = f"Source {i+1}"
-
-                                st.markdown(f"**Source {i+1}:** {source_name}")
-                                content_preview = (doc.get('page_content') or '')[:300].replace('\n', ' ')
-                                if len(doc.get('page_content', '')) > 300:
-                                    content_preview += "..."
-                                st.markdown(f"> {content_preview}")
-                                if i < len(source_documents) - 1:
-                                    st.divider()
+                        st.session_state.pending_sources = source_documents
+                        st.session_state.pending_sources_chat = active_chat_id
 
                     status_placeholder.success(f"✅ Response generated ({sources_count} sources)")
 
