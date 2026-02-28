@@ -396,7 +396,15 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                 "type": "user_received",
                 "message": user_query
             })
-            
+
+            # FIX 6: Immediately signal the frontend that processing has started.
+            # This eliminates the blank-wait UX during the condense + retrieval phase
+            # (which can take 1-6 seconds before the first answer token arrives).
+            await websocket.send_json({
+                "type": "thinking",
+                "message": "Searching knowledge base..."
+            })
+
             # Get chat history
             hist_start = time.perf_counter()
             messages = get_messages(chat_id)
@@ -430,10 +438,6 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
             source_docs = []
             first_chunk_time = None
             chunk_count = 0
-            # Initialize here so it is always defined even if the stream errors out
-            # before the 'complete' message arrives — previously caused UnboundLocalError
-            # which silently dropped the AI message from the database on every error.
-            serialized_sources = []
 
             # Use an asyncio.Queue to receive chunks from a background thread.
             queue: asyncio.Queue = asyncio.Queue()
@@ -475,36 +479,22 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                         source_docs = stream_output.get('source_documents', [])
                         total_stream_elapsed = time.perf_counter() - stream_start
 
-                        # Serialize source documents to JSON-friendly structure.
-                        # Force every metadata value to a JSON-safe type so that
-                        # json.dumps() in add_message() never silently drops sources
-                        # (e.g. PurePosixPath objects are not serializable by default).
+                        # Serialize source documents to JSON-friendly structure
                         serialized_sources = []
                         for doc in source_docs:
                             try:
-                                raw_meta = doc.metadata if hasattr(doc, 'metadata') else {}
-                                src = raw_meta.get('source', None)
+                                src = doc.metadata.get('source', None) if hasattr(doc, 'metadata') else None
+                                meta = doc.metadata if hasattr(doc, 'metadata') else {}
                                 page_content = doc.page_content if hasattr(doc, 'page_content') else str(doc)
-                                # Convert source path to plain string
-                                if src is not None:
-                                    src = str(src)
-                                # Sanitize every metadata value to be JSON-serializable
-                                safe_meta = {}
-                                for k, v in (raw_meta or {}).items():
-                                    try:
-                                        json.dumps(v)
-                                        safe_meta[str(k)] = v
-                                    except (TypeError, ValueError):
-                                        safe_meta[str(k)] = str(v)
                             except Exception:
                                 src = None
-                                safe_meta = {}
+                                meta = {}
                                 page_content = str(doc)
 
                             serialized_sources.append({
                                 "source": src,
                                 "page_content": page_content,
-                                "metadata": safe_meta
+                                "metadata": meta
                             })
 
                         log_timing(api_logger, "STREAMING_COMPLETE", {

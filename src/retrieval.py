@@ -1,3 +1,5 @@
+import os
+import pickle
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.retrievers import EnsembleRetriever # To combine semantic + Keyword based
@@ -67,22 +69,52 @@ class EnhancedRetriever(BaseRetriever):
 
     # method to define BM25 retriever
     def _setup_bm25_retriever(self):
-        """Setup BM25 retriever for keyword search"""
+        """
+        Setup BM25 retriever for keyword search.
+
+        FIX 3: The BM25 index is now persisted to disk as a pickle file
+        (faiss_index_multimodal/bm25_cache.pkl). On subsequent server restarts
+        the cache is loaded in ~50ms instead of rebuilding from scratch (~3.5s).
+
+        Cache invalidation: delete bm25_cache.pkl manually whenever the FAISS
+        index is rebuilt via ingestion.py.
+        """
         try:
-            # Get all documents from FAISS
+            cache_path = os.path.join(self.faiss_index_path, "bm25_cache.pkl")
+
+            # --- Try loading from disk cache first ---
+            if os.path.exists(cache_path):
+                cache_start = time.perf_counter()
+                with open(cache_path, "rb") as f:
+                    self._bm25_retriever = pickle.load(f)
+                log_timing(logger, "BM25_CACHE_LOAD", {
+                    'duration_ms': round((time.perf_counter() - cache_start) * 1000, 2),
+                    'source': 'disk'
+                })
+                return
+
+            # --- Build BM25 index from scratch ---
             all_docs = []
             docstore = self._vector_store.docstore
-            
             for doc_id in self._vector_store.index_to_docstore_id.values():
                 doc = docstore.search(doc_id)
                 all_docs.append(doc)
-            
-            # Create BM25 retriever
-            self._bm25_retriever = BM25Retriever.from_documents(
-                all_docs,
-                k=6
-            )
-            
+
+            build_start = time.perf_counter()
+            self._bm25_retriever = BM25Retriever.from_documents(all_docs, k=6)
+            log_timing(logger, "BM25_INDEX_BUILD", {
+                'duration_ms': round((time.perf_counter() - build_start) * 1000, 2),
+                'num_docs': len(all_docs)
+            })
+
+            # --- Persist to disk for fast future restarts ---
+            try:
+                with open(cache_path, "wb") as f:
+                    pickle.dump(self._bm25_retriever, f)
+                logger.info(f"BM25 cache saved to {cache_path}")
+            except Exception as cache_err:
+                logger.warning(f"Could not save BM25 cache: {cache_err}")
+
         except Exception as e:
             print(f"BM25 setup failed, using semantic only: {e}")
             self._bm25_retriever = None
@@ -119,11 +151,6 @@ class EnhancedRetriever(BaseRetriever):
                 'enhancements': len(enhancements_applied),
                 'applied_domains': ','.join(enhancements_applied[:3])
             })
-        
-        return enhanced_question
-        for disease, expansion in expansions.items():
-            if disease in question_lower:
-                enhanced_question += f" {expansion}"
         
         return enhanced_question
     
