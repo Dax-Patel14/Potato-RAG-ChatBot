@@ -434,10 +434,14 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
             
             # Stream the response and measure timings
             stream_start = time.perf_counter()
+            
+            # Initialize all variables needed for completion tracking
             full_response = ""
             source_docs = []
+            serialized_sources = []
             first_chunk_time = None
             chunk_count = 0
+            stream_successful = False
 
             # Use an asyncio.Queue to receive chunks from a background thread.
             queue: asyncio.Queue = asyncio.Queue()
@@ -514,6 +518,7 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                                 "total_ms": round(total_stream_elapsed * 1000, 2)
                             }
                         })
+                        stream_successful = True
                         break
 
                     elif stream_output.get('type') == 'error':
@@ -523,18 +528,23 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                         })
                         break
 
-                # Add AI response to database after streaming completes (include sources metadata)
-                db_ai_start = time.perf_counter()
-                add_message(chat_id, "assistant", full_response, metadata={"source_documents": serialized_sources})
-                db_ai_elapsed = time.perf_counter() - db_ai_start
-                
-                log_timing(api_logger, "DB_ADD_AI_WS", {
-                    'duration_ms': round(db_ai_elapsed * 1000, 2),
-                    'response_length': len(full_response)
-                })
-                
-                total_elapsed = time.perf_counter() - request_start
-                log_query_complete(api_logger, request_id, total_elapsed, "SUCCESS")
+                # Only save to DB if the stream successfully completed
+                if stream_successful:
+                    db_ai_start = time.perf_counter()
+                    add_message(chat_id, "assistant", full_response, metadata={"source_documents": serialized_sources})
+                    db_ai_elapsed = time.perf_counter() - db_ai_start
+                    
+                    log_timing(api_logger, "DB_ADD_AI_WS", {
+                        'duration_ms': round(db_ai_elapsed * 1000, 2),
+                        'response_length': len(full_response)
+                    })
+                    
+                    total_elapsed = time.perf_counter() - request_start
+                    log_query_complete(api_logger, request_id, total_elapsed, "SUCCESS")
+                else:
+                    api_logger.warning(f"Stream incomplete for request {request_id}, skipping DB save.")
+                    total_elapsed = time.perf_counter() - request_start
+                    log_query_complete(api_logger, request_id, total_elapsed, "FAILED: Stream interrupted")
 
             except Exception as e:
                 await websocket.send_json({

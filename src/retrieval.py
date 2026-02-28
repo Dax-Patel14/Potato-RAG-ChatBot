@@ -1,14 +1,20 @@
 import os
 import pickle
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_community.vectorstores import FAISS
-from langchain.retrievers import EnsembleRetriever # To combine semantic + Keyword based
-from langchain_community.retrievers import BM25Retriever # Keyword based
-from langchain.schema import Document, BaseRetriever
-from typing import List, Any, Optional
-from pydantic import Field, PrivateAttr
 import time
 import uuid
+from typing import List, Any, Optional
+from pydantic import Field, PrivateAttr
+
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_community.vectorstores import FAISS
+from langchain_community.retrievers import BM25Retriever
+
+# --- UPDATED IMPORTS ---
+from langchain_classic.retrievers import EnsembleRetriever 
+from langchain_core.documents import Document
+from langchain_core.retrievers import BaseRetriever
+# -----------------------
+
 from src.logging_utils import setup_logger, timer, log_timing, log_retrieval_metrics
 
 # Point this to the new multimodal index directory

@@ -28,3 +28,6 @@ chat_history.db
 
 # Ignore Analysis folder
 Analysis/
+
+# Ignore logs
+logs/

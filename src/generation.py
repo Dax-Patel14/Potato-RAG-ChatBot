@@ -1,12 +1,16 @@
 import os
 import concurrent.futures
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from langchain.memory import ConversationSummaryBufferMemory
-from langchain.schema import Document
-from langchain_core.prompts import PromptTemplate
-from typing import List, Tuple, Dict, Generator
 import time
+
+# --- UPDATED IMPORTS ---
+from langchain_openai import ChatOpenAI
+from langchain_classic.memory import ConversationSummaryBufferMemory
+from langchain_core.documents import Document
+from langchain_core.prompts import PromptTemplate
+# -----------------------
+
+from typing import List, Tuple, Dict, Generator
 from src.logging_utils import setup_logger, timer, log_timing, log_generation_metrics
 
 load_dotenv()
@@ -32,8 +36,15 @@ class ImprovedConversationalChain:
     def __init__(self, retriever):
         self.retriever = retriever
 
-        # FIX 4: cap output tokens to prevent response length from growing with history
-        self.llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1, streaming=True, max_tokens=600)
+        # FIX 4 & FIX 2: cap output tokens and add connection resilience
+        self.llm = ChatOpenAI(
+            model="gpt-4o-mini", 
+            temperature=0.1, 
+            streaming=True, 
+            max_tokens=600,
+            timeout=60.0,      # Give OpenAI 60 seconds to respond
+            max_retries=3      # Automatically retry on dropped connections
+        )
 
         # FIX 1 & 5: Dedicated non-streaming LLM for condensing follow-up questions.
         # This completely prevents the double-call bug — the streaming LLM is only
