@@ -54,3 +54,24 @@ class HealthResponse(BaseModel):
     message: str
     database: str
     api_version: str = "1.0.0"
+
+# Image Analysis Models
+class DiseaseCandidate(BaseModel):
+    disease: str
+    display_name: str
+    score: float
+
+class MatchedRefImage(BaseModel):
+    image_path: str
+    disease: str
+    similarity_score: float
+
+class ImageAnalysisResponse(BaseModel):
+    prediction: str
+    confidence: float
+    top_candidates: List[DiseaseCandidate] = []
+    matched_ref_images: List[MatchedRefImage] = []
+    rag_query: str
+    rag_response: Optional[str] = None
+    source_documents: Optional[List[dict]] = []
+    timings: Optional[dict] = None

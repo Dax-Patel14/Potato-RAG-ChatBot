@@ -904,3 +904,506 @@
 2026-02-28 19:40:25,238 | INFO     | api             | ====================================================================================================
 2026-02-28 19:40:25,267 | INFO     | api             | WebSocket client disconnected - request_id=8a46d0ea
 2026-02-28 19:45:46,968 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 668.86ms | source=disk
+2026-02-28 19:48:00,717 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 258.3ms | source=disk
+2026-02-28 19:48:29,618 | INFO     | api             | ====================================================================================================
+2026-02-28 19:48:29,618 | INFO     | api             | QUERY_START | ID: 662a4c26 | Question: other bacterial agent to be used for White fungus in potato tuber?...
+2026-02-28 19:48:29,618 | INFO     | api             | ====================================================================================================
+2026-02-28 19:48:29,626 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 6.19ms
+2026-02-28 19:48:29,631 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 3.41ms | history_items=7
+2026-02-28 19:48:29,631 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.21ms | history_items=7
+2026-02-28 19:48:29,633 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-02-28 19:48:32,531 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 2879.43ms | docs_retrieved=15
+2026-02-28 19:48:32,531 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 1.33ms | docs_processed=15 | docs_returned=8
+2026-02-28 19:48:32,537 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=2882.57 | methods=ensemble
+2026-02-28 19:48:33,146 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 3512.31ms
+2026-02-28 19:48:33,146 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 3514.31ms | original_docs=8
+2026-02-28 19:48:33,601 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 464.98ms | docs_retrieved=15
+2026-02-28 19:48:33,601 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 1.3ms | docs_processed=15 | docs_returned=8
+2026-02-28 19:48:33,601 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=467.73 | methods=ensemble
+2026-02-28 19:48:33,601 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 468.72ms | extra_docs=7 | total_docs=15
+2026-02-28 19:48:33,617 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=15
+2026-02-28 19:48:40,623 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 7007.71ms | chunk_count=357 | answer_length=1670
+2026-02-28 19:48:40,627 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=10994.86 | chunks=357 | tokens=226
+2026-02-28 19:48:40,627 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=15 | result_count=15 | final_count=15
+2026-02-28 19:48:40,629 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 10998.24ms | chunks=357 | response_length=1670 | first_chunk_ms=5047.04
+2026-02-28 19:48:40,636 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 7.98ms | response_length=1670
+2026-02-28 19:48:40,636 | INFO     | api             | ====================================================================================================
+2026-02-28 19:48:40,636 | INFO     | api             | QUERY_COMPLETE | ID: 662a4c26 | Status: SUCCESS
+2026-02-28 19:48:40,643 | INFO     | api             | TOTAL_TIME | 11026.73ms
+2026-02-28 19:48:40,643 | INFO     | api             | ====================================================================================================
+2026-02-28 19:48:40,644 | INFO     | api             | WebSocket client disconnected - request_id=662a4c26
+2026-02-28 23:50:04,650 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 288.95ms | source=disk
+2026-02-28 23:50:28,227 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 330.87ms | source=disk
+2026-02-28 23:51:24,785 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 103.49ms | source=disk
+2026-02-28 23:52:07,920 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 99.8ms | source=disk
+2026-02-28 23:52:26,587 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 146.91ms | source=disk
+2026-02-28 23:52:52,645 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 138.47ms | source=disk
+2026-02-28 23:53:06,944 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 140.52ms | source=disk
+2026-02-28 23:53:20,727 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 132.16ms | source=disk
+2026-02-28 23:55:20,142 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 140.17ms | source=disk
+2026-02-28 23:55:20,657 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-02-28 23:58:17,734 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-02-28 23:58:18,479 | WARNING  | image_analyzer  | Reference FAISS index not found at B:\Research\Potato Disease\potato-llm-project - multimodal\reference_images. Image-to-image matching disabled. Run: python -m src.build_reference_index
+2026-02-28 23:58:18,479 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 177823.25ms | device=cpu | disease_categories=20 | ref_index_loaded=False | ref_images_count=0
+2026-02-28 23:59:28,519 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 102.63ms | source=disk
+2026-02-28 23:59:28,871 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-02-28 23:59:33,862 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-02-28 23:59:34,481 | WARNING  | image_analyzer  | Reference FAISS index not found at B:\Research\Potato Disease\potato-llm-project - multimodal\reference_images. Image-to-image matching disabled. Run: python -m src.build_reference_index
+2026-02-28 23:59:34,481 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 5604.21ms | device=cpu | disease_categories=20 | ref_index_loaded=False | ref_images_count=0
+2026-02-28 23:59:43,871 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 102.09ms | source=disk
+2026-02-28 23:59:44,256 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-02-28 23:59:49,282 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-02-28 23:59:49,945 | WARNING  | image_analyzer  | Reference FAISS index not found at B:\Research\Potato Disease\potato-llm-project - multimodal\reference_images. Image-to-image matching disabled. Run: python -m src.build_reference_index
+2026-02-28 23:59:49,945 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 5703.43ms | device=cpu | disease_categories=20 | ref_index_loaded=False | ref_images_count=0
+2026-03-01 00:01:33,278 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 103.99ms | source=disk
+2026-03-01 00:01:33,623 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 00:01:37,518 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 00:01:38,220 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 00:01:38,220 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 4583.62ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 00:02:09,623 | INFO     | api             | ====================================================================================================
+2026-03-01 00:02:09,623 | INFO     | api             | QUERY_START | ID: 9a2878fd | Question: hh...
+2026-03-01 00:02:09,623 | INFO     | api             | ====================================================================================================
+2026-03-01 00:02:09,627 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 3.33ms
+2026-03-01 00:02:09,630 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.4ms | history_items=8
+2026-03-01 00:02:09,631 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.13ms | history_items=8
+2026-03-01 00:02:09,632 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:02:12,230 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 2591.47ms | docs_retrieved=15
+2026-03-01 00:02:12,230 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 1.65ms | docs_processed=15 | docs_returned=8
+2026-03-01 00:02:12,230 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=2593.83 | methods=ensemble
+2026-03-01 00:02:12,525 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 2896.75ms
+2026-03-01 00:02:12,525 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 2897.83ms | original_docs=8
+2026-03-01 00:02:14,724 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 2195.77ms | docs_retrieved=15
+2026-03-01 00:02:14,724 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.53ms | docs_processed=15 | docs_returned=8
+2026-03-01 00:02:14,724 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=2197.05 | methods=ensemble
+2026-03-01 00:02:14,724 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 2197.54ms | extra_docs=8 | total_docs=16
+2026-03-01 00:02:14,724 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=16
+2026-03-01 00:02:30,701 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 15972.83ms | chunk_count=333 | answer_length=1549
+2026-03-01 00:02:30,702 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=21070.37 | chunks=333 | tokens=215
+2026-03-01 00:02:30,702 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=16 | result_count=16 | final_count=16
+2026-03-01 00:02:30,702 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 21071.65ms | chunks=333 | response_length=1549 | first_chunk_ms=7692.81
+2026-03-01 00:02:30,708 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.15ms | response_length=1549
+2026-03-01 00:02:30,709 | INFO     | api             | ====================================================================================================
+2026-03-01 00:02:30,709 | INFO     | api             | QUERY_COMPLETE | ID: 9a2878fd | Status: SUCCESS
+2026-03-01 00:02:30,709 | INFO     | api             | TOTAL_TIME | 21086.35ms
+2026-03-01 00:02:30,709 | INFO     | api             | ====================================================================================================
+2026-03-01 00:02:30,710 | INFO     | api             | WebSocket client disconnected - request_id=9a2878fd
+2026-03-01 00:03:01,093 | INFO     | api             | ====================================================================================================
+2026-03-01 00:03:01,093 | INFO     | api             | QUERY_START | ID: 53649810 | Question: IMAGE_ANALYSIS: 9570095c-02e9-497b-bec1-4e526f3462e5___RS_LB 2815.JPG...
+2026-03-01 00:03:01,093 | INFO     | api             | ====================================================================================================
+2026-03-01 00:03:01,223 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 116.97ms | top_disease=Early Blight | top_confidence=22.0
+2026-03-01 00:03:01,290 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 66.99ms | results=10
+2026-03-01 00:03:01,290 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 185.01ms | prediction=Late Blight | confidence=76.2 | ref_images_used=10 | mode=hybrid
+2026-03-01 00:03:01,290 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 185.34ms | prediction=Late Blight | confidence=0.7618
+2026-03-01 00:03:01,298 | INFO     | generation      | TIMING | MEMORY_SYNC                    | Duration: 0.11ms | history_items=9
+2026-03-01 00:03:01,298 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:03:01,299 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=2 | applied_domains=late blight,early blight
+2026-03-01 00:03:01,760 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 456.9ms | docs_retrieved=14
+2026-03-01 00:03:01,761 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.61ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:03:01,761 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=462.18 | methods=ensemble
+2026-03-01 00:03:02,412 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1113.55ms
+2026-03-01 00:03:02,413 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 1115.14ms | original_docs=8
+2026-03-01 00:03:02,413 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=late blight
+2026-03-01 00:03:02,711 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 307.34ms | docs_retrieved=14
+2026-03-01 00:03:02,711 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.51ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:03:02,711 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=309.32 | methods=ensemble
+2026-03-01 00:03:02,711 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 309.83ms | extra_docs=5 | total_docs=13
+2026-03-01 00:03:02,711 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=13
+2026-03-01 00:03:10,793 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 8073.41ms | answer_length=1761 | source_docs=13
+2026-03-01 00:03:10,793 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=9500.04
+2026-03-01 00:03:10,793 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 9500.34ms
+2026-03-01 00:03:10,793 | INFO     | api             | ====================================================================================================
+2026-03-01 00:03:10,793 | INFO     | api             | QUERY_COMPLETE | ID: 53649810 | Status: SUCCESS
+2026-03-01 00:03:10,793 | INFO     | api             | TOTAL_TIME | 9709.23ms
+2026-03-01 00:03:10,793 | INFO     | api             | ====================================================================================================
+2026-03-01 00:05:58,549 | INFO     | api             | ====================================================================================================
+2026-03-01 00:05:58,549 | INFO     | api             | QUERY_START | ID: 9b5bf64f | Question: IMAGE_ANALYSIS: test_late_blight.png...
+2026-03-01 00:05:58,550 | INFO     | api             | ====================================================================================================
+2026-03-01 00:05:58,667 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 129.03ms | top_disease=Blackleg | top_confidence=48.1
+2026-03-01 00:05:58,790 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 112.04ms | results=10
+2026-03-01 00:05:58,792 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 242.11ms | prediction=Late Blight | confidence=50.6 | ref_images_used=10 | mode=hybrid
+2026-03-01 00:05:58,792 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 242.59ms | prediction=Late Blight | confidence=0.5056
+2026-03-01 00:05:58,797 | INFO     | generation      | TIMING | MEMORY_SYNC                    | Duration: 0.13ms | history_items=10
+2026-03-01 00:05:58,800 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:05:58,800 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=3 | applied_domains=late blight,early blight,blackleg
+2026-03-01 00:05:59,257 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 453.25ms | docs_retrieved=14
+2026-03-01 00:05:59,257 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.6ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:05:59,257 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=457.14 | methods=ensemble
+2026-03-01 00:05:59,850 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1058.88ms
+2026-03-01 00:05:59,850 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 1060.05ms | original_docs=8
+2026-03-01 00:05:59,850 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=late blight
+2026-03-01 00:06:00,140 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 280.0ms | docs_retrieved=14
+2026-03-01 00:06:00,140 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.48ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:06:00,140 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=281.42 | methods=ensemble
+2026-03-01 00:06:00,140 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 281.83ms | extra_docs=6 | total_docs=14
+2026-03-01 00:06:00,140 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=14
+2026-03-01 00:06:06,233 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 6103.38ms | answer_length=1652 | source_docs=14
+2026-03-01 00:06:06,233 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=7447.77
+2026-03-01 00:06:06,248 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 7448.2ms
+2026-03-01 00:06:06,251 | INFO     | api             | ====================================================================================================
+2026-03-01 00:06:06,251 | INFO     | api             | QUERY_COMPLETE | ID: 9b5bf64f | Status: SUCCESS
+2026-03-01 00:06:06,251 | INFO     | api             | TOTAL_TIME | 7766.72ms
+2026-03-01 00:06:06,251 | INFO     | api             | ====================================================================================================
+2026-03-01 00:06:48,814 | INFO     | api             | ====================================================================================================
+2026-03-01 00:06:48,814 | INFO     | api             | QUERY_START | ID: 2bad6745 | Question: which fungicides to use to control it?...
+2026-03-01 00:06:48,815 | INFO     | api             | ====================================================================================================
+2026-03-01 00:06:48,818 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 3.48ms
+2026-03-01 00:06:48,822 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.34ms | history_items=11
+2026-03-01 00:06:48,823 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.14ms | history_items=11
+2026-03-01 00:06:48,823 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:06:49,937 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1116.74ms
+2026-03-01 00:06:50,034 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1209.01ms | docs_retrieved=14
+2026-03-01 00:06:50,035 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.7ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:06:50,035 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1210.34 | methods=ensemble
+2026-03-01 00:06:50,035 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 1212.98ms | original_docs=8
+2026-03-01 00:06:50,036 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.0ms | enhancements=1 | applied_domains=late blight
+2026-03-01 00:06:50,335 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 298.37ms | docs_retrieved=14
+2026-03-01 00:06:50,336 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.41ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:06:50,336 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=299.82 | methods=ensemble
+2026-03-01 00:06:50,336 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 300.27ms | extra_docs=8 | total_docs=16
+2026-03-01 00:06:50,337 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=16
+2026-03-01 00:06:59,473 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 9135.69ms | chunk_count=348 | answer_length=1507
+2026-03-01 00:06:59,473 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=10650.89 | chunks=348 | tokens=212
+2026-03-01 00:06:59,473 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=16 | result_count=16 | final_count=16
+2026-03-01 00:06:59,473 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 10652.26ms | chunks=348 | response_length=1507 | first_chunk_ms=3361.38
+2026-03-01 00:06:59,480 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 4.68ms | response_length=1507
+2026-03-01 00:06:59,480 | INFO     | api             | ====================================================================================================
+2026-03-01 00:06:59,480 | INFO     | api             | QUERY_COMPLETE | ID: 2bad6745 | Status: SUCCESS
+2026-03-01 00:06:59,481 | INFO     | api             | TOTAL_TIME | 10668.09ms
+2026-03-01 00:06:59,481 | INFO     | api             | ====================================================================================================
+2026-03-01 00:06:59,482 | INFO     | api             | WebSocket client disconnected - request_id=2bad6745
+2026-03-01 00:09:02,067 | INFO     | api             | ====================================================================================================
+2026-03-01 00:09:02,067 | INFO     | api             | QUERY_START | ID: 00e9d799 | Question: IMAGE_ANALYSIS: 5dd2be45-9c02-4b82-a7be-ecbac29981a9___RS_Early.B 7947.JPG...
+2026-03-01 00:09:02,067 | INFO     | api             | ====================================================================================================
+2026-03-01 00:09:02,136 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 68.75ms | top_disease=Late Blight | top_confidence=42.0
+2026-03-01 00:09:02,207 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 69.3ms | results=10
+2026-03-01 00:09:02,207 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 138.93ms | prediction=Early Blight | confidence=78.0 | ref_images_used=10 | mode=hybrid
+2026-03-01 00:09:02,207 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 139.16ms | prediction=Early Blight | confidence=0.7795
+2026-03-01 00:09:02,214 | INFO     | generation      | TIMING | MEMORY_SYNC                    | Duration: 0.13ms | history_items=12
+2026-03-01 00:09:02,215 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:09:02,216 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=2 | applied_domains=late blight,early blight
+2026-03-01 00:09:02,710 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 505.03ms | docs_retrieved=14
+2026-03-01 00:09:02,723 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.66ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:09:02,723 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=506.97 | methods=ensemble
+2026-03-01 00:09:03,311 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1097.13ms
+2026-03-01 00:09:03,311 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 1098.64ms | original_docs=8
+2026-03-01 00:09:03,311 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=early blight
+2026-03-01 00:09:03,698 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 388.33ms | docs_retrieved=15
+2026-03-01 00:09:03,698 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.48ms | docs_processed=15 | docs_returned=8
+2026-03-01 00:09:03,698 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=389.83 | methods=ensemble
+2026-03-01 00:09:03,698 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 390.23ms | extra_docs=7 | total_docs=15
+2026-03-01 00:09:03,698 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=15
+2026-03-01 00:09:11,873 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 8172.13ms | answer_length=1874 | source_docs=15
+2026-03-01 00:09:11,876 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=9662.95
+2026-03-01 00:09:11,876 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 9663.32ms
+2026-03-01 00:09:11,876 | INFO     | api             | ====================================================================================================
+2026-03-01 00:09:11,876 | INFO     | api             | QUERY_COMPLETE | ID: 00e9d799 | Status: SUCCESS
+2026-03-01 00:09:11,876 | INFO     | api             | TOTAL_TIME | 9816.05ms
+2026-03-01 00:09:11,876 | INFO     | api             | ====================================================================================================
+2026-03-01 00:23:39,250 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 97.18ms | source=disk
+2026-03-01 00:23:39,595 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 00:23:43,576 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 00:23:44,273 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 00:23:44,273 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 4680.88ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 00:25:18,468 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 107.77ms | source=disk
+2026-03-01 00:25:18,831 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 00:25:23,305 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 00:25:24,035 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 00:25:24,035 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 5204.58ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 00:25:42,848 | INFO     | api             | ====================================================================================================
+2026-03-01 00:25:42,848 | INFO     | api             | QUERY_START | ID: deb08eb2 | Question: hii...
+2026-03-01 00:25:42,848 | INFO     | api             | ====================================================================================================
+2026-03-01 00:25:42,848 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.83ms
+2026-03-01 00:25:42,848 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 1.69ms | history_items=0
+2026-03-01 00:25:42,863 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-03-01 00:25:43,986 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1114.04ms | docs_retrieved=15
+2026-03-01 00:25:43,988 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.34ms | docs_processed=15 | docs_returned=8
+2026-03-01 00:25:43,988 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1115.04 | methods=ensemble
+2026-03-01 00:25:43,989 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=8
+2026-03-01 00:25:44,718 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 731.45ms | chunk_count=13 | answer_length=34
+2026-03-01 00:25:44,718 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=1857.74 | chunks=13 | tokens=7
+2026-03-01 00:25:44,718 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=8 | result_count=8 | final_count=8
+2026-03-01 00:25:44,718 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 1859.22ms | chunks=13 | response_length=34 | first_chunk_ms=1734.62
+2026-03-01 00:25:44,718 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 6.09ms | response_length=34
+2026-03-01 00:25:44,718 | INFO     | api             | ====================================================================================================
+2026-03-01 00:25:44,718 | INFO     | api             | QUERY_COMPLETE | ID: deb08eb2 | Status: SUCCESS
+2026-03-01 00:25:44,718 | INFO     | api             | TOTAL_TIME | 1875.88ms
+2026-03-01 00:25:44,718 | INFO     | api             | ====================================================================================================
+2026-03-01 00:25:44,718 | INFO     | api             | WebSocket client disconnected - request_id=deb08eb2
+2026-03-01 00:27:03,902 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 97.61ms | source=disk
+2026-03-01 00:27:04,273 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 00:27:08,264 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 00:27:08,930 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 00:27:08,930 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 4661.2ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 00:27:49,514 | INFO     | api             | ====================================================================================================
+2026-03-01 00:27:49,515 | INFO     | api             | QUERY_START | ID: 399550b0 | Question: IMAGE_ANALYSIS: test_late_blight.png...
+2026-03-01 00:27:49,515 | INFO     | api             | ====================================================================================================
+2026-03-01 00:27:49,681 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 166.95ms | top_disease=Blackleg | top_confidence=48.1
+2026-03-01 00:27:49,797 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 115.91ms | results=10
+2026-03-01 00:27:49,799 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 283.72ms | prediction=Late Blight | confidence=50.6 | ref_images_used=10 | mode=hybrid
+2026-03-01 00:27:49,799 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 284.07ms | prediction=Late Blight | confidence=0.5056
+2026-03-01 00:27:49,805 | INFO     | generation      | TIMING | MEMORY_SYNC                    | Duration: 0.14ms | history_items=1
+2026-03-01 00:27:49,805 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:27:49,813 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=3 | applied_domains=late blight,early blight,blackleg
+2026-03-01 00:27:50,858 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1058.02ms | docs_retrieved=14
+2026-03-01 00:27:50,874 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.82ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:27:50,875 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1060.46 | methods=ensemble
+2026-03-01 00:27:51,691 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1885.79ms
+2026-03-01 00:27:51,691 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 1887.03ms | original_docs=8
+2026-03-01 00:27:51,691 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=late blight
+2026-03-01 00:27:51,992 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 303.05ms | docs_retrieved=14
+2026-03-01 00:27:51,992 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.41ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:27:51,992 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=304.52 | methods=ensemble
+2026-03-01 00:27:51,992 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 304.93ms | extra_docs=6 | total_docs=14
+2026-03-01 00:27:51,992 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=14
+2026-03-01 00:27:57,010 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 5023.98ms | answer_length=1320 | source_docs=14
+2026-03-01 00:27:57,010 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=7217.87
+2026-03-01 00:27:57,023 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 7218.18ms
+2026-03-01 00:27:57,025 | INFO     | api             | ====================================================================================================
+2026-03-01 00:27:57,025 | INFO     | api             | QUERY_COMPLETE | ID: 399550b0 | Status: SUCCESS
+2026-03-01 00:27:57,025 | INFO     | api             | TOTAL_TIME | 7598.53ms
+2026-03-01 00:27:57,025 | INFO     | api             | ====================================================================================================
+2026-03-01 00:29:05,084 | INFO     | api             | ====================================================================================================
+2026-03-01 00:29:05,084 | INFO     | api             | QUERY_START | ID: 3b771b06 | Question: which fungicides to use to treat it?...
+2026-03-01 00:29:05,084 | INFO     | api             | ====================================================================================================
+2026-03-01 00:29:05,089 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.54ms
+2026-03-01 00:29:05,091 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 1.65ms | history_items=2
+2026-03-01 00:29:05,092 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.08ms | history_items=2
+2026-03-01 00:29:05,093 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:29:05,464 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 370.94ms | docs_retrieved=13
+2026-03-01 00:29:05,465 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.51ms | docs_processed=13 | docs_returned=8
+2026-03-01 00:29:05,466 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=372.19 | methods=ensemble
+2026-03-01 00:29:05,911 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 818.38ms
+2026-03-01 00:29:05,912 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 819.92ms | original_docs=8
+2026-03-01 00:29:05,913 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=late blight
+2026-03-01 00:29:06,362 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 449.12ms | docs_retrieved=14
+2026-03-01 00:29:06,363 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.33ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:29:06,363 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=450.57 | methods=ensemble
+2026-03-01 00:29:06,364 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 450.99ms | extra_docs=8 | total_docs=16
+2026-03-01 00:29:06,364 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=16
+2026-03-01 00:29:12,028 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 5664.23ms | chunk_count=286 | answer_length=1419
+2026-03-01 00:29:12,028 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=6937.04 | chunks=286 | tokens=202
+2026-03-01 00:29:12,029 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=16 | result_count=16 | final_count=16
+2026-03-01 00:29:12,029 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 6938.29ms | chunks=286 | response_length=1419 | first_chunk_ms=2207.79
+2026-03-01 00:29:12,036 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.18ms | response_length=1419
+2026-03-01 00:29:12,036 | INFO     | api             | ====================================================================================================
+2026-03-01 00:29:12,037 | INFO     | api             | QUERY_COMPLETE | ID: 3b771b06 | Status: SUCCESS
+2026-03-01 00:29:12,037 | INFO     | api             | TOTAL_TIME | 6954.54ms
+2026-03-01 00:29:12,037 | INFO     | api             | ====================================================================================================
+2026-03-01 00:29:12,038 | INFO     | api             | WebSocket client disconnected - request_id=3b771b06
+2026-03-01 00:30:12,479 | INFO     | api             | ====================================================================================================
+2026-03-01 00:30:12,480 | INFO     | api             | QUERY_START | ID: 78fbd76e | Question: IMAGE_ANALYSIS: test_late_blight.png...
+2026-03-01 00:30:12,480 | INFO     | api             | ====================================================================================================
+2026-03-01 00:30:12,598 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 124.29ms | top_disease=Blackleg | top_confidence=48.1
+2026-03-01 00:30:12,716 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 114.12ms | results=10
+2026-03-01 00:30:12,716 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 239.28ms | prediction=Late Blight | confidence=50.6 | ref_images_used=10 | mode=hybrid
+2026-03-01 00:30:12,716 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 239.62ms | prediction=Late Blight | confidence=0.5056
+2026-03-01 00:30:12,716 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-03-01 00:30:12,716 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=3 | applied_domains=late blight,early blight,blackleg
+2026-03-01 00:30:13,116 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 403.59ms | docs_retrieved=14
+2026-03-01 00:30:13,132 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.54ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:30:13,132 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=405.14 | methods=ensemble
+2026-03-01 00:30:13,132 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=8
+2026-03-01 00:30:19,721 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 6598.0ms | answer_length=1574 | source_docs=8
+2026-03-01 00:30:19,721 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=7004.89
+2026-03-01 00:30:19,721 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 7005.33ms
+2026-03-01 00:30:19,734 | INFO     | api             | ====================================================================================================
+2026-03-01 00:30:19,734 | INFO     | api             | QUERY_COMPLETE | ID: 78fbd76e | Status: SUCCESS
+2026-03-01 00:30:19,734 | INFO     | api             | TOTAL_TIME | 7319.78ms
+2026-03-01 00:30:19,734 | INFO     | api             | ====================================================================================================
+2026-03-01 00:31:22,946 | INFO     | api             | ====================================================================================================
+2026-03-01 00:31:22,947 | INFO     | api             | QUERY_START | ID: e348bf44 | Question: Which fungicide to use to treat it?...
+2026-03-01 00:31:22,947 | INFO     | api             | ====================================================================================================
+2026-03-01 00:31:22,953 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 5.07ms
+2026-03-01 00:31:22,955 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 1.83ms | history_items=1
+2026-03-01 00:31:22,956 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.06ms | history_items=1
+2026-03-01 00:31:22,956 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:31:23,513 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 557.37ms | docs_retrieved=15
+2026-03-01 00:31:23,513 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.39ms | docs_processed=15 | docs_returned=8
+2026-03-01 00:31:23,513 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=558.45 | methods=ensemble
+2026-03-01 00:31:23,989 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1033.44ms
+2026-03-01 00:31:23,991 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 1035.03ms | original_docs=8
+2026-03-01 00:31:23,991 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.0ms | enhancements=1 | applied_domains=late blight
+2026-03-01 00:31:24,270 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 279.16ms | docs_retrieved=13
+2026-03-01 00:31:24,272 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.31ms | docs_processed=13 | docs_returned=8
+2026-03-01 00:31:24,272 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=280.35 | methods=ensemble
+2026-03-01 00:31:24,272 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 280.71ms | extra_docs=8 | total_docs=16
+2026-03-01 00:31:24,272 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=16
+2026-03-01 00:31:30,879 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 6618.68ms | chunk_count=271 | answer_length=1244
+2026-03-01 00:31:30,879 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=7936.24 | chunks=271 | tokens=179
+2026-03-01 00:31:30,879 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=16 | result_count=16 | final_count=16
+2026-03-01 00:31:30,879 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 7937.52ms | chunks=271 | response_length=1244 | first_chunk_ms=2132.33
+2026-03-01 00:31:30,897 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.52ms | response_length=1244
+2026-03-01 00:31:30,897 | INFO     | api             | ====================================================================================================
+2026-03-01 00:31:30,897 | INFO     | api             | QUERY_COMPLETE | ID: e348bf44 | Status: SUCCESS
+2026-03-01 00:31:30,897 | INFO     | api             | TOTAL_TIME | 7954.02ms
+2026-03-01 00:31:30,897 | INFO     | api             | ====================================================================================================
+2026-03-01 00:31:30,902 | INFO     | api             | WebSocket client disconnected - request_id=e348bf44
+2026-03-01 00:40:52,562 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 99.29ms | source=disk
+2026-03-01 00:40:52,908 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 00:40:57,166 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 00:40:57,853 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 00:40:57,853 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 4951.37ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 00:41:45,428 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 98.1ms | source=disk
+2026-03-01 00:41:45,806 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 00:41:49,969 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 00:41:50,672 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 00:41:50,672 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 4857.95ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 00:42:20,660 | INFO     | api             | ====================================================================================================
+2026-03-01 00:42:20,660 | INFO     | api             | QUERY_START | ID: ba6c4bc9 | Question: IMAGE_ANALYSIS: test_late_blight.png...
+2026-03-01 00:42:20,660 | INFO     | api             | ====================================================================================================
+2026-03-01 00:42:20,827 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 166.39ms | top_disease=Blackleg | top_confidence=48.1
+2026-03-01 00:42:20,934 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 111.47ms | results=10
+2026-03-01 00:42:20,934 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 278.67ms | prediction=Late Blight | confidence=50.6 | ref_images_used=10 | mode=hybrid
+2026-03-01 00:42:20,934 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 278.98ms | prediction=Late Blight | confidence=0.5056
+2026-03-01 00:42:20,934 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-03-01 00:42:20,952 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=3 | applied_domains=late blight,early blight,blackleg
+2026-03-01 00:42:22,158 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1212.66ms | docs_retrieved=14
+2026-03-01 00:42:22,158 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.62ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:42:22,158 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1214.26 | methods=ensemble
+2026-03-01 00:42:22,158 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=8
+2026-03-01 00:42:28,545 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 6377.81ms | answer_length=1617 | source_docs=8
+2026-03-01 00:42:28,546 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=7600.03
+2026-03-01 00:42:28,546 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 7600.29ms
+2026-03-01 00:42:28,547 | INFO     | api             | ====================================================================================================
+2026-03-01 00:42:28,547 | INFO     | api             | QUERY_COMPLETE | ID: ba6c4bc9 | Status: SUCCESS
+2026-03-01 00:42:28,547 | INFO     | api             | TOTAL_TIME | 7967.29ms
+2026-03-01 00:42:28,547 | INFO     | api             | ====================================================================================================
+2026-03-01 00:43:02,980 | INFO     | api             | ====================================================================================================
+2026-03-01 00:43:02,981 | INFO     | api             | QUERY_START | ID: 8f325409 | Question: which fungicides to use to treat it?...
+2026-03-01 00:43:02,981 | INFO     | api             | ====================================================================================================
+2026-03-01 00:43:02,986 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 4.46ms
+2026-03-01 00:43:02,988 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 2.1ms | history_items=1
+2026-03-01 00:43:02,991 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.1ms | history_items=1
+2026-03-01 00:43:02,992 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 00:43:03,884 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 893.84ms
+2026-03-01 00:43:04,021 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1029.27ms | docs_retrieved=13
+2026-03-01 00:43:04,022 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.51ms | docs_processed=13 | docs_returned=8
+2026-03-01 00:43:04,022 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1030.69 | methods=ensemble
+2026-03-01 00:43:04,022 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 1032.12ms | original_docs=8
+2026-03-01 00:43:04,022 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=late blight
+2026-03-01 00:43:05,120 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1096.28ms | docs_retrieved=14
+2026-03-01 00:43:05,121 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.51ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:43:05,121 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1097.94 | methods=ensemble
+2026-03-01 00:43:05,122 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 1098.41ms | extra_docs=8 | total_docs=16
+2026-03-01 00:43:05,122 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=16
+2026-03-01 00:43:15,240 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 10117.5ms | chunk_count=300 | answer_length=1377
+2026-03-01 00:43:15,240 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=12250.11 | chunks=300 | tokens=195
+2026-03-01 00:43:15,240 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=16 | result_count=16 | final_count=16
+2026-03-01 00:43:15,241 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 12251.85ms | chunks=300 | response_length=1377 | first_chunk_ms=3113.38
+2026-03-01 00:43:15,243 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.61ms | response_length=1377
+2026-03-01 00:43:15,243 | INFO     | api             | ====================================================================================================
+2026-03-01 00:43:15,243 | INFO     | api             | QUERY_COMPLETE | ID: 8f325409 | Status: SUCCESS
+2026-03-01 00:43:15,243 | INFO     | api             | TOTAL_TIME | 12268.78ms
+2026-03-01 00:43:15,243 | INFO     | api             | ====================================================================================================
+2026-03-01 00:43:15,243 | INFO     | api             | WebSocket client disconnected - request_id=8f325409
+2026-03-01 00:44:31,938 | INFO     | api             | ====================================================================================================
+2026-03-01 00:44:31,939 | INFO     | api             | QUERY_START | ID: ef127ff8 | Question: IMAGE_ANALYSIS: test_late_blight.png...
+2026-03-01 00:44:31,939 | INFO     | api             | ====================================================================================================
+2026-03-01 00:44:32,056 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 117.15ms | top_disease=Blackleg | top_confidence=48.1
+2026-03-01 00:44:32,166 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 118.18ms | results=10
+2026-03-01 00:44:32,166 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 236.28ms | prediction=Late Blight | confidence=50.6 | ref_images_used=10 | mode=hybrid
+2026-03-01 00:44:32,166 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 236.53ms | prediction=Late Blight | confidence=0.5056
+2026-03-01 00:44:32,181 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-03-01 00:44:32,181 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=3 | applied_domains=late blight,early blight,blackleg
+2026-03-01 00:44:32,669 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 492.1ms | docs_retrieved=14
+2026-03-01 00:44:32,669 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.54ms | docs_processed=14 | docs_returned=8
+2026-03-01 00:44:32,669 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=493.76 | methods=ensemble
+2026-03-01 00:44:32,669 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=8
+2026-03-01 00:44:38,254 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 5588.22ms | answer_length=1409 | source_docs=8
+2026-03-01 00:44:38,266 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=6083.54
+2026-03-01 00:44:38,266 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 6083.89ms
+2026-03-01 00:44:38,269 | INFO     | api             | ====================================================================================================
+2026-03-01 00:44:38,269 | INFO     | api             | QUERY_COMPLETE | ID: ef127ff8 | Status: SUCCESS
+2026-03-01 00:44:38,269 | INFO     | api             | TOTAL_TIME | 6400.5ms
+2026-03-01 00:44:38,269 | INFO     | api             | ====================================================================================================
+2026-03-01 00:58:53,122 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 114.3ms | source=disk
+2026-03-01 00:58:53,503 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 00:58:57,551 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 00:58:58,370 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 00:58:58,370 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 4873.06ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 01:00:45,532 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 118.45ms | source=disk
+2026-03-01 01:00:45,945 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 01:00:49,861 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 01:00:50,663 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 01:00:50,663 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 4713.9ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 01:01:08,158 | INFO     | retrieval       | TIMING | BM25_CACHE_LOAD                | Duration: 106.49ms | source=disk
+2026-03-01 01:01:08,569 | INFO     | image_analyzer  | Initializing CLIPDiseaseAnalyzer...
+2026-03-01 01:01:12,394 | INFO     | image_analyzer  | Encoding disease text prompts...
+2026-03-01 01:01:13,107 | INFO     | image_analyzer  | Reference FAISS index loaded: 228 images
+2026-03-01 01:01:13,107 | INFO     | image_analyzer  | TIMING | CLIP_ANALYZER_INIT             | Duration: 4538.24ms | device=cpu | disease_categories=20 | ref_index_loaded=True | ref_images_count=228
+2026-03-01 01:02:00,570 | INFO     | api             | ====================================================================================================
+2026-03-01 01:02:00,570 | INFO     | api             | QUERY_START | ID: 5197e4d8 | Question: IMAGE_ANALYSIS: test_late_blight.png...
+2026-03-01 01:02:00,571 | INFO     | api             | ====================================================================================================
+2026-03-01 01:02:00,724 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 156.07ms | top_disease=Blackleg | top_confidence=48.1
+2026-03-01 01:02:00,837 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 111.35ms | results=10
+2026-03-01 01:02:00,837 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 268.34ms | prediction=Late Blight | confidence=50.6 | ref_images_used=10 | mode=hybrid
+2026-03-01 01:02:00,837 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 268.87ms | prediction=Late Blight | confidence=0.5056
+2026-03-01 01:02:00,872 | INFO     | generation      | TIMING | MEMORY_CLEAR                   | Cleared stale chain memory for new conversation
+2026-03-01 01:02:00,879 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=3 | applied_domains=late blight,early blight,blackleg
+2026-03-01 01:02:02,224 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1353.63ms | docs_retrieved=14
+2026-03-01 01:02:02,235 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.62ms | docs_processed=14 | docs_returned=8
+2026-03-01 01:02:02,236 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1355.42 | methods=ensemble
+2026-03-01 01:02:02,236 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=8
+2026-03-01 01:02:08,673 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 6437.81ms | answer_length=1744 | source_docs=8
+2026-03-01 01:02:08,674 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=7802.34
+2026-03-01 01:02:08,674 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 7802.58ms
+2026-03-01 01:02:08,680 | INFO     | api             | ====================================================================================================
+2026-03-01 01:02:08,680 | INFO     | api             | QUERY_COMPLETE | ID: 5197e4d8 | Status: SUCCESS
+2026-03-01 01:02:08,680 | INFO     | api             | TOTAL_TIME | 8194.01ms
+2026-03-01 01:02:08,680 | INFO     | api             | ====================================================================================================
+2026-03-01 01:02:36,325 | INFO     | api             | ====================================================================================================
+2026-03-01 01:02:36,325 | INFO     | api             | QUERY_START | ID: 0c40d058 | Question: which fungicides to use to treat it?...
+2026-03-01 01:02:36,325 | INFO     | api             | ====================================================================================================
+2026-03-01 01:02:36,330 | INFO     | api             | TIMING | DB_ADD_USER_WS                 | Duration: 3.37ms
+2026-03-01 01:02:36,346 | INFO     | api             | TIMING | HISTORY_RETRIEVAL_WS           | Duration: 16.84ms | history_items=1
+2026-03-01 01:02:36,352 | INFO     | generation      | TIMING | MEMORY_SYNC_STREAM             | Duration: 0.14ms | history_items=1
+2026-03-01 01:02:36,353 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 01:02:36,688 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 345.72ms | docs_retrieved=13
+2026-03-01 01:02:36,688 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.4ms | docs_processed=13 | docs_returned=8
+2026-03-01 01:02:36,688 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=346.86 | methods=ensemble
+2026-03-01 01:02:38,435 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 2091.79ms
+2026-03-01 01:02:38,435 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 2092.93ms | original_docs=8
+2026-03-01 01:02:38,435 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.0ms | enhancements=1 | applied_domains=late blight
+2026-03-01 01:02:39,469 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 1022.32ms | docs_retrieved=14
+2026-03-01 01:02:39,469 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.36ms | docs_processed=14 | docs_returned=8
+2026-03-01 01:02:39,471 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=1024.05 | methods=ensemble
+2026-03-01 01:02:39,471 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 1024.46ms | extra_docs=8 | total_docs=16
+2026-03-01 01:02:39,471 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=16
+2026-03-01 01:02:45,275 | INFO     | generation      | TIMING | STREAMING_CHUNKS               | Duration: 5806.17ms | chunk_count=343 | answer_length=1641
+2026-03-01 01:02:45,275 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=8925.72 | chunks=343 | tokens=230
+2026-03-01 01:02:45,275 | INFO     | generation      | TIMING | SOURCE_DOCS_FINAL              | captured_count=16 | result_count=16 | final_count=16
+2026-03-01 01:02:45,275 | INFO     | api             | TIMING | STREAMING_COMPLETE             | Duration: 8930.91ms | chunks=343 | response_length=1641 | first_chunk_ms=4172.66
+2026-03-01 01:02:45,275 | INFO     | api             | TIMING | DB_ADD_AI_WS                   | Duration: 5.0ms | response_length=1641
+2026-03-01 01:02:45,275 | INFO     | api             | ====================================================================================================
+2026-03-01 01:02:45,275 | INFO     | api             | QUERY_COMPLETE | ID: 0c40d058 | Status: SUCCESS
+2026-03-01 01:02:45,275 | INFO     | api             | TOTAL_TIME | 8961.52ms
+2026-03-01 01:02:45,275 | INFO     | api             | ====================================================================================================
+2026-03-01 01:02:45,275 | INFO     | api             | WebSocket client disconnected - request_id=0c40d058
+2026-03-01 01:04:35,078 | INFO     | api             | ====================================================================================================
+2026-03-01 01:04:35,079 | INFO     | api             | QUERY_START | ID: f5ec467d | Question: IMAGE_ANALYSIS: 0b3e5032-8ae8-49ac-8157-a1cac3df01dd___RS_HL 1817.JPG...
+2026-03-01 01:04:35,079 | INFO     | api             | ====================================================================================================
+2026-03-01 01:04:35,155 | INFO     | image_analyzer  | TIMING | ZERO_SHOT_CLASSIFY             | Duration: 75.13ms | top_disease=Virus Disease (PVY/PLRV) | top_confidence=32.7
+2026-03-01 01:04:35,225 | INFO     | image_analyzer  | TIMING | REF_IMAGE_MATCHING             | Duration: 69.64ms | results=10
+2026-03-01 01:04:35,225 | INFO     | image_analyzer  | TIMING | FULL_IMAGE_ANALYSIS            | Duration: 145.79ms | prediction=Late Blight | confidence=71.3 | ref_images_used=10 | mode=hybrid
+2026-03-01 01:04:35,226 | INFO     | api             | TIMING | CLIP_IMAGE_ANALYSIS            | Duration: 146.07ms | prediction=Late Blight | confidence=0.713
+2026-03-01 01:04:35,248 | INFO     | generation      | TIMING | MEMORY_SYNC                    | Duration: 0.08ms | history_items=2
+2026-03-01 01:04:35,249 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM             | Started (rephrasing follow-up as standalone question)
+2026-03-01 01:04:35,251 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=late blight
+2026-03-01 01:04:35,648 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 396.72ms | docs_retrieved=13
+2026-03-01 01:04:35,649 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.75ms | docs_processed=13 | docs_returned=8
+2026-03-01 01:04:35,651 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=400.24 | methods=ensemble
+2026-03-01 01:04:36,733 | INFO     | generation      | TIMING | CONDENSE_QUESTION_LLM          | Duration: 1491.72ms
+2026-03-01 01:04:36,733 | INFO     | generation      | TIMING | PARALLEL_CONDENSE_RETRIEVE     | Duration: 1493.86ms | original_docs=8
+2026-03-01 01:04:36,733 | INFO     | retrieval       | TIMING | QUERY_PREPROCESS               | Duration: 0.01ms | enhancements=1 | applied_domains=late blight
+2026-03-01 01:04:37,015 | INFO     | retrieval       | TIMING | ENSEMBLE_RETRIEVAL             | Duration: 279.51ms | docs_retrieved=14
+2026-03-01 01:04:37,015 | INFO     | retrieval       | TIMING | DOCUMENT_RERANKING             | Duration: 0.48ms | docs_processed=14 | docs_returned=8
+2026-03-01 01:04:37,015 | INFO     | retrieval       | TIMING | RETRIEVAL                      | num_docs=8 | retrieval_ms=281.33 | methods=ensemble
+2026-03-01 01:04:37,015 | INFO     | generation      | TIMING | CONDENSED_RETRIEVAL_MERGE      | Duration: 281.78ms | extra_docs=5 | total_docs=13
+2026-03-01 01:04:37,015 | INFO     | generation      | TIMING | SOURCE_DOCS_CAPTURED           | count=13
+2026-03-01 01:04:43,798 | INFO     | generation      | TIMING | CHAIN_INVOCATION               | Duration: 6776.79ms | answer_length=1849 | source_docs=13
+2026-03-01 01:04:43,798 | INFO     | generation      | TIMING | GENERATION                     | generation_ms=8554.88
+2026-03-01 01:04:43,798 | INFO     | api             | TIMING | IMAGE_RAG_CHAIN                | Duration: 8555.11ms
+2026-03-01 01:04:43,798 | INFO     | api             | ====================================================================================================
+2026-03-01 01:04:43,798 | INFO     | api             | QUERY_COMPLETE | ID: f5ec467d | Status: SUCCESS
+2026-03-01 01:04:43,798 | INFO     | api             | TOTAL_TIME | 8730.3ms
+2026-03-01 01:04:43,798 | INFO     | api             | ====================================================================================================

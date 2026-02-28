@@ -31,3 +31,6 @@ Analysis/
 
 # Ignore logs
 logs/
+
+# Ignore reference images
+reference_images/

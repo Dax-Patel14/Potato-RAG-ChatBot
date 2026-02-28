@@ -27,6 +27,14 @@ from src.generation import create_conversational_chain
 from src.retrieval import load_retriever_from_disk
 from src.logging_utils import setup_logger, log_timing, log_query_start, log_query_complete
 
+# Image analysis (CLIP-based, runs locally — zero API cost)
+try:
+    from src.image_analyzer import CLIPDiseaseAnalyzer
+    IMAGE_ANALYSIS_AVAILABLE = True
+except ImportError:
+    print("CLIP image analysis module not available. Install: pip install transformers torch")
+    IMAGE_ANALYSIS_AVAILABLE = False
+
 # Initialize logger
 api_logger = setup_logger('api')
 
@@ -48,9 +56,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global RAG chain instance
+# Global instances
 qa_chain = None
 retriever = None
+image_analyzer = None
 
 # Startup and Shutdown events
 @app.on_event("startup")
@@ -76,6 +85,16 @@ async def startup_event():
     except Exception as e:
         print(f" RAG chain loading failed: {e}")
         raise
+    
+    # Load CLIP image analyzer (non-blocking — app works without it)
+    global image_analyzer
+    if IMAGE_ANALYSIS_AVAILABLE:
+        try:
+            image_analyzer = CLIPDiseaseAnalyzer(load_faiss_index=True)
+            print(" CLIP image analyzer loaded successfully")
+        except Exception as e:
+            print(f" CLIP image analyzer failed (non-fatal): {e}")
+            image_analyzer = None
     
     print(" API startup complete!")
 
@@ -434,14 +453,10 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
             
             # Stream the response and measure timings
             stream_start = time.perf_counter()
-            
-            # Initialize all variables needed for completion tracking
             full_response = ""
             source_docs = []
-            serialized_sources = []
             first_chunk_time = None
             chunk_count = 0
-            stream_successful = False
 
             # Use an asyncio.Queue to receive chunks from a background thread.
             queue: asyncio.Queue = asyncio.Queue()
@@ -487,18 +502,27 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                         serialized_sources = []
                         for doc in source_docs:
                             try:
-                                src = doc.metadata.get('source', None) if hasattr(doc, 'metadata') else None
-                                meta = doc.metadata if hasattr(doc, 'metadata') else {}
+                                raw_meta = doc.metadata if hasattr(doc, 'metadata') else {}
+                                src = raw_meta.get('source', None)
                                 page_content = doc.page_content if hasattr(doc, 'page_content') else str(doc)
+                                if src is not None:
+                                    src = str(src)
+                                safe_meta = {}
+                                for k, v in (raw_meta or {}).items():
+                                    try:
+                                        json.dumps(v)
+                                        safe_meta[str(k)] = v
+                                    except (TypeError, ValueError):
+                                        safe_meta[str(k)] = str(v)
                             except Exception:
                                 src = None
-                                meta = {}
+                                safe_meta = {}
                                 page_content = str(doc)
 
                             serialized_sources.append({
                                 "source": src,
                                 "page_content": page_content,
-                                "metadata": meta
+                                "metadata": safe_meta
                             })
 
                         log_timing(api_logger, "STREAMING_COMPLETE", {
@@ -518,7 +542,6 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                                 "total_ms": round(total_stream_elapsed * 1000, 2)
                             }
                         })
-                        stream_successful = True
                         break
 
                     elif stream_output.get('type') == 'error':
@@ -528,23 +551,18 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
                         })
                         break
 
-                # Only save to DB if the stream successfully completed
-                if stream_successful:
-                    db_ai_start = time.perf_counter()
-                    add_message(chat_id, "assistant", full_response, metadata={"source_documents": serialized_sources})
-                    db_ai_elapsed = time.perf_counter() - db_ai_start
-                    
-                    log_timing(api_logger, "DB_ADD_AI_WS", {
-                        'duration_ms': round(db_ai_elapsed * 1000, 2),
-                        'response_length': len(full_response)
-                    })
-                    
-                    total_elapsed = time.perf_counter() - request_start
-                    log_query_complete(api_logger, request_id, total_elapsed, "SUCCESS")
-                else:
-                    api_logger.warning(f"Stream incomplete for request {request_id}, skipping DB save.")
-                    total_elapsed = time.perf_counter() - request_start
-                    log_query_complete(api_logger, request_id, total_elapsed, "FAILED: Stream interrupted")
+                # Add AI response to database after streaming completes (include sources metadata)
+                db_ai_start = time.perf_counter()
+                add_message(chat_id, "assistant", full_response, metadata={"source_documents": serialized_sources})
+                db_ai_elapsed = time.perf_counter() - db_ai_start
+                
+                log_timing(api_logger, "DB_ADD_AI_WS", {
+                    'duration_ms': round(db_ai_elapsed * 1000, 2),
+                    'response_length': len(full_response)
+                })
+                
+                total_elapsed = time.perf_counter() - request_start
+                log_query_complete(api_logger, request_id, total_elapsed, "SUCCESS")
 
             except Exception as e:
                 await websocket.send_json({
@@ -565,6 +583,174 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
             })
         except:
             pass
+
+# ==================== Image Analysis Endpoint ====================
+
+
+
+from fastapi import File, UploadFile, Form
+from PIL import Image as PILImage
+import io
+
+@app.post("/api/analyze-image")
+async def analyze_image(
+    image: UploadFile = File(...),
+    chat_id: str = Form(...),
+    language: str = Form("English"),
+    trigger_rag: bool = Form(True),
+):
+    """
+    Analyze an uploaded potato image using CLIP reference matching.
+    Returns disease prediction + confidence + optional RAG explanation.
+    Classification runs locally (zero API cost). Only the RAG answer uses LLM.
+    """
+    request_id = str(uuid.uuid4())[:8]
+    request_start = time.perf_counter()
+
+    try:
+        if not IMAGE_ANALYSIS_AVAILABLE or image_analyzer is None:
+            raise HTTPException(
+                status_code=503,
+                detail="Image analysis not available. Install transformers+torch and run build_reference_index."
+            )
+
+        # Read and validate image
+        image_bytes = await image.read()
+        try:
+            pil_image = PILImage.open(io.BytesIO(image_bytes)).convert("RGB")
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid image file.")
+
+        log_query_start(api_logger, request_id, f"IMAGE_ANALYSIS: {image.filename}")
+
+        # CLIP analysis (runs locally — $0)
+        analysis_start = time.perf_counter()
+        analysis = image_analyzer.analyze_image(pil_image, top_k_diseases=5, top_k_ref_images=10)
+        analysis_elapsed = time.perf_counter() - analysis_start
+
+        log_timing(api_logger, "CLIP_IMAGE_ANALYSIS", {
+            'duration_ms': round(analysis_elapsed * 1000, 2),
+            'prediction': analysis['display_name'],
+            'confidence': analysis['confidence'],
+        })
+
+        # Build response
+        response_data = {
+            "prediction": analysis['display_name'],
+            "confidence": analysis['confidence'],
+            "top_candidates": analysis['all_candidates'],
+            "matched_ref_images": [
+                {
+                    "image_path": img['image_path'],
+                    "disease": img['display_name'],
+                    "similarity_score": round(img['similarity_score'], 4),
+                }
+                for img in analysis['matched_ref_images'][:5]
+            ],
+            "rag_query": analysis['rag_query'],
+            "rag_response": None,
+            "source_documents": [],
+        }
+
+        # Optionally trigger RAG for detailed explanation (1 LLM call)
+        if trigger_rag and qa_chain is not None:
+            rag_query = analysis['rag_query']
+            if language == "Hindi":
+                rag_query += "\n\nIMPORTANT: Respond in Hindi (\u0939\u093f\u0902\u0926\u0940 \u092e\u0947\u0902 \u0909\u0924\u094d\u0924\u0930 \u0926\u0947\u0902)."
+
+            # Save user message — include base64 image + CLIP analysis in metadata
+            import base64 as _b64
+            image_b64 = _b64.b64encode(image_bytes).decode('utf-8')
+            user_msg = f"[Image uploaded: {image.filename}]\n{analysis['rag_query']}"
+            user_meta = {
+                "image_analysis": True,
+                "image_b64": image_b64,
+                "image_filename": image.filename,
+            }
+            add_message(chat_id, "user", user_msg, metadata=user_meta)
+
+            # Get chat history
+            messages_db = get_messages(chat_id)
+            chat_history_raw = [
+                (msg[0], msg[1])
+                for msg in messages_db[:-1]
+                if msg[0] in ["user", "assistant"]
+            ]
+            reconstructed_history = []
+            for i in range(0, len(chat_history_raw), 2):
+                if i + 1 < len(chat_history_raw):
+                    reconstructed_history.append((chat_history_raw[i][1], chat_history_raw[i+1][1]))
+
+            # Invoke RAG chain
+            chain_start = time.perf_counter()
+            result = qa_chain.invoke({
+                "question": rag_query,
+                "chat_history": reconstructed_history
+            })
+            log_timing(api_logger, "IMAGE_RAG_CHAIN", {
+                'duration_ms': round((time.perf_counter() - chain_start) * 1000, 2)
+            })
+
+            ai_response = result.get("answer", "")
+            source_docs = result.get("source_documents", [])
+
+            # Serialize sources
+            serialized_sources = []
+            for doc in source_docs:
+                try:
+                    raw_meta = doc.metadata if hasattr(doc, 'metadata') else {}
+                    src = raw_meta.get('source', None)
+                    page_content = doc.page_content if hasattr(doc, 'page_content') else str(doc)
+                    safe_meta = {}
+                    for k, v in (raw_meta or {}).items():
+                        try:
+                            json.dumps(v)
+                            safe_meta[str(k)] = v
+                        except (TypeError, ValueError):
+                            safe_meta[str(k)] = str(v)
+                except Exception:
+                    src = None
+                    safe_meta = {}
+                    page_content = str(doc)
+                serialized_sources.append({
+                    "source": src,
+                    "page_content": page_content,
+                    "metadata": safe_meta
+                })
+
+            assistant_meta = {
+                "source_documents": serialized_sources,
+                "image_analysis": True,
+                "prediction": analysis['display_name'],
+                "confidence": analysis['confidence'],
+                "top_candidates": analysis['all_candidates'],
+                "matched_ref_images": [
+                    {
+                        "image_path": img['image_path'],
+                        "disease": img['display_name'],
+                        "similarity_score": round(img['similarity_score'], 4),
+                    }
+                    for img in analysis['matched_ref_images'][:5]
+                ],
+            }
+            add_message(chat_id, "assistant", ai_response, metadata=assistant_meta)
+
+            response_data["rag_response"] = ai_response
+            response_data["source_documents"] = serialized_sources
+
+        total_time = time.perf_counter() - request_start
+        log_query_complete(api_logger, request_id, total_time, "SUCCESS")
+        response_data["timings"] = {"total_ms": round(total_time * 1000, 2)}
+        return response_data
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        total_time = time.perf_counter() - request_start
+        log_query_complete(api_logger, request_id, total_time, f"FAILED: {type(e).__name__}")
+        api_logger.error(f"Error in analyze_image: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # ==================== Error Handlers ====================
 

@@ -69,7 +69,7 @@ if "chats" not in st.session_state:
         # Load chats from backend
         chats_data = api_client.list_chats()
         st.session_state.chats = {}
-        
+       
         for chat in chats_data:
             chat_id = chat["id"]
             st.session_state.chats[chat_id] = {
@@ -78,7 +78,7 @@ if "chats" not in st.session_state:
                 "created_at": chat["created_at"],
                 "message_count": chat.get("message_count", 0)
             }
-        
+       
         # Set active chat
         if st.session_state.chats:
             st.session_state.active_chat_id = list(st.session_state.chats.keys())[0]
@@ -100,12 +100,22 @@ if "pending_sources" not in st.session_state:
     st.session_state.pending_sources = []
 if "pending_sources_chat" not in st.session_state:
     st.session_state.pending_sources_chat = None
+if "image_analysis_result" not in st.session_state:
+    st.session_state.image_analysis_result = None
+if "image_analysis_chat" not in st.session_state:
+    st.session_state.image_analysis_chat = None
+if "image_analysis_uploaded_bytes" not in st.session_state:
+    st.session_state.image_analysis_uploaded_bytes = None
+if "image_analysis_uploaded_name" not in st.session_state:
+    st.session_state.image_analysis_uploaded_name = None
+if "upload_key_counter" not in st.session_state:
+    st.session_state.upload_key_counter = 0
 
 # ==================== SIDEBAR ====================
 
 with st.sidebar:
     st.header("💬 Conversations")
-    
+   
     # New Chat Button
     col1, col2 = st.columns(2)
     with col1:
@@ -124,7 +134,7 @@ with st.sidebar:
                 st.rerun()
             except Exception as e:
                 st.error(f"Failed to create chat: {str(e)}")
-    
+   
     with col2:
         if st.button("🔄 Refresh", use_container_width=True):
             try:
@@ -144,12 +154,12 @@ with st.sidebar:
                 st.rerun()
             except Exception as e:
                 st.error(f"Failed to refresh chats: {str(e)}")
-    
+   
     st.divider()
-    
+   
     # Chat List
     st.subheader("📋 Chat History")
-    
+   
     if st.session_state.chats:
         # Sort chats by creation time (newest first)
         sorted_chats = sorted(
@@ -157,17 +167,17 @@ with st.sidebar:
             key=lambda x: x[1]["created_at"],
             reverse=True
         )
-        
+       
         for chat_id, chat_data in sorted_chats:
             col1, col2 = st.columns([5, 1])
-            
+           
             with col1:
                 is_active = chat_id == st.session_state.active_chat_id
                 chat_label = f"{'🟢 ' if is_active else '⚪ '}{chat_data['name']}"
-                
+               
                 if chat_data.get("message_count", 0) > 0:
                     chat_label += f" ({chat_data['message_count']})"
-                
+               
                 if st.button(
                     chat_label,
                     key=f"chat_{chat_id}",
@@ -176,13 +186,13 @@ with st.sidebar:
                 ):
                     st.session_state.active_chat_id = chat_id
                     st.rerun()
-            
+           
             with col2:
                 # Three-dot menu
                 with st.popover("⋮", use_container_width=True):
                     st.markdown(f"**{chat_data['name'][:25]}...**")
                     st.divider()
-                    
+                   
                     # Rename
                     new_name = st.text_input(
                         "Rename",
@@ -190,7 +200,7 @@ with st.sidebar:
                         key=f"rename_input_{chat_id}",
                         label_visibility="collapsed"
                     )
-                    
+                   
                     col_a, col_b = st.columns(2)
                     with col_a:
                         if st.button("✏️ Rename", key=f"rename_{chat_id}", use_container_width=True):
@@ -202,7 +212,7 @@ with st.sidebar:
                                     st.rerun()
                             except Exception as e:
                                 st.error(f"Failed to rename: {str(e)}")
-                    
+                   
                     # Delete
                     if len(st.session_state.chats) > 1:
                         st.divider()
@@ -221,12 +231,12 @@ with st.sidebar:
                         st.caption("⚠️ Cannot delete last chat")
     else:
         st.info("No chats yet. Create one to start!")
-    
+   
     st.divider()
-    
+   
     # Language Toggle
     st.subheader("🌐 Response Language")
-    
+   
     col_lang1, col_lang2 = st.columns(2)
     with col_lang1:
         if st.button(
@@ -237,7 +247,7 @@ with st.sidebar:
         ):
             st.session_state.response_language = "English"
             st.rerun()
-    
+   
     with col_lang2:
         if st.button(
             "🇮🇳 हिंदी",
@@ -247,14 +257,14 @@ with st.sidebar:
         ):
             st.session_state.response_language = "Hindi"
             st.rerun()
-    
+   
     st.caption(f"💬 **{st.session_state.response_language}**")
-    
+   
     st.divider()
-    
+   
     # System Status
     st.subheader("📊 System Status")
-    
+   
     try:
         health = api_client.health_check()
         st.success(f"✅ API Running")
@@ -262,13 +272,13 @@ with st.sidebar:
     except:
         st.error("❌ API Offline")
         st.caption("Cannot reach backend")
-    
+   
     st.divider()
-    
+   
     # API Configuration
     st.subheader("⚙️ API Settings")
     st.caption(f"Backend: {API_BASE_URL}")
-    
+   
     if st.button("🔌 Test Connection", use_container_width=True):
         try:
             health = api_client.health_check()
@@ -281,115 +291,187 @@ with st.sidebar:
 if st.session_state.active_chat_id:
     active_chat_id = st.session_state.active_chat_id
     active_chat_name = st.session_state.chats[active_chat_id]["name"]
-    
+   
     st.subheader(f"📝 {active_chat_name}")
-    
+   
     # Load and display messages
     try:
         messages = api_client.get_messages(active_chat_id)
-        
+       
         if messages:
             # Display messages in a scrollable container
             for msg in messages:
                 sender = msg["sender"]
                 content = msg["content"]
                 timestamp = msg["timestamp"]
-                
+               
                 if sender == "user":
-                    st.markdown(f"""
-                    <div class="chat-message user-message">
-                        <strong>👤 You:</strong><br/>
-                        {content}
-                        <br/><small style="color:gray;">{timestamp}</small>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    # Check if this is an image analysis message
+                    msg_meta = msg.get('metadata') or {}
+                    if isinstance(msg_meta, dict) and msg_meta.get('image_analysis'):
+                        import base64 as _b64
+                        with st.chat_message("user"):
+                            image_b64 = msg_meta.get('image_b64')
+                            if image_b64:
+                                try:
+                                    img_data = _b64.b64decode(image_b64)
+                                    st.image(img_data, caption=f"Uploaded: {msg_meta.get('image_filename', 'image')}", width=300)
+                                except Exception:
+                                    pass
+                            st.markdown(content)
+                            st.caption(timestamp)
+                    else:
+                        st.markdown(f"""
+                        <div class="chat-message user-message">
+                            <strong>👤 You:</strong><br/>
+                            {content}
+                            <br/><small style="color:gray;">{timestamp}</small>
+                        </div>
+                        """, unsafe_allow_html=True)
                 else:
-                    st.markdown(f"""
-                    <div class="chat-message assistant-message">
-                        <strong>🥔 Aloo Sahayak:</strong><br/>
-                        {content}
-                        <br/><small style="color:gray;">{timestamp}</small>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    # Check if this is an image analysis assistant message
+                    a_meta = msg.get('metadata') or {}
+                    is_img_analysis = isinstance(a_meta, dict) and a_meta.get('image_analysis')
 
-                    # Show persisted source documents if saved in message metadata
-                    try:
-                        metadata = msg.get('metadata') or {}
-                        source_documents = metadata.get('source_documents', []) if isinstance(metadata, dict) else []
-                        if source_documents:
-                            st.markdown('---')
-                            with st.expander(f"📚 View Sources ({len(source_documents)} found)"):
-                                for i, doc in enumerate(source_documents):
-                                    source_name = None
-                                    try:
-                                        source_name = doc.get('source') or (doc.get('metadata', {}).get('source') if doc.get('metadata') else None)
-                                    except Exception:
+                    if is_img_analysis:
+                        # Render rich CLIP analysis panel within chat message
+                        with st.chat_message("assistant"):
+                            st.markdown("**🔬 Disease Analysis Results**")
+                            conf = a_meta.get('confidence', 0)
+                            pred = a_meta.get('prediction', 'Unknown')
+                            conf_emoji = "🟢" if conf >= 0.5 else ("🟡" if conf >= 0.3 else "🔴")
+                            st.markdown(f"**Predicted:** {pred} {conf_emoji} ({conf:.0%} confidence)")
+
+                            with st.expander("🏥 All Candidate Predictions", expanded=False):
+                                for c in a_meta.get('top_candidates', []):
+                                    pct = c.get('score', 0) * 100
+                                    name = c.get('display_name', c.get('disease', 'Unknown'))
+                                    st.markdown(f"- **{name}**: {pct:.1f}%")
+
+                            ref_imgs = a_meta.get('matched_ref_images', [])
+                            if ref_imgs:
+                                with st.expander(f"📸 Similar Reference Images ({len(ref_imgs)} found)", expanded=False):
+                                    for ri in ref_imgs:
+                                        img_path = ri.get('image_path', '')
+                                        if os.path.exists(img_path):
+                                            st.image(
+                                                img_path,
+                                                caption=f"{ri.get('disease', 'Unknown')} — similarity: {ri.get('similarity_score', 0):.2f}",
+                                                use_container_width=True
+                                            )
+                                        else:
+                                            st.caption(f"🖼️ {ri.get('disease', 'Unknown')} (similarity: {ri.get('similarity_score', 0):.2f})")
+
+                            st.markdown("**📖 Detailed Explanation**")
+                            st.markdown(content)
+
+                            # Sources
+                            source_documents = a_meta.get('source_documents', [])
+                            if source_documents:
+                                with st.expander(f"📚 View Sources ({len(source_documents)} found)"):
+                                    for i, doc in enumerate(source_documents):
+                                        source_name = doc.get('source') or (doc.get('metadata', {}).get('source') if doc.get('metadata') else None) or f"Source {i+1}"
+                                        st.markdown(f"**Source {i+1}:** {source_name}")
+                                        content_preview = (doc.get('page_content') or '')[:300].replace('\n', ' ')
+                                        if len(doc.get('page_content', '')) > 300:
+                                            content_preview += "..."
+                                        st.markdown(f"> {content_preview}")
+                                        if i < len(source_documents) - 1:
+                                            st.divider()
+
+                            st.caption(f"💡 Ask follow-up questions below. • {timestamp}")
+                    else:
+                        st.markdown(f"""
+                        <div class="chat-message assistant-message">
+                            <strong>🥔 Aloo Sahayak:</strong><br/>
+                            {content}
+                            <br/><small style="color:gray;">{timestamp}</small>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        # Show persisted source documents if saved in message metadata
+                        try:
+                            source_documents = a_meta.get('source_documents', []) if isinstance(a_meta, dict) else []
+                            if source_documents:
+                                st.markdown('---')
+                                with st.expander(f"📚 View Sources ({len(source_documents)} found)"):
+                                    for i, doc in enumerate(source_documents):
                                         source_name = None
+                                        try:
+                                            source_name = doc.get('source') or (doc.get('metadata', {}).get('source') if doc.get('metadata') else None)
+                                        except Exception:
+                                            source_name = None
 
-                                    if not source_name:
-                                        source_name = f"Source {i+1}"
+                                        if not source_name:
+                                            source_name = f"Source {i+1}"
 
-                                    st.markdown(f"**Source {i+1}:** {source_name}")
-                                    content_preview = (doc.get('page_content') or '')[:300].replace('\n', ' ')
-                                    if len(doc.get('page_content', '')) > 300:
-                                        content_preview += "..."
-                                    st.markdown(f"> {content_preview}")
-                                    if i < len(source_documents) - 1:
-                                        st.divider()
-                    except Exception:
-                        pass
+                                        st.markdown(f"**Source {i+1}:** {source_name}")
+                                        content_preview = (doc.get('page_content') or '')[:300].replace('\n', ' ')
+                                        if len(doc.get('page_content', '')) > 300:
+                                            content_preview += "..."
+                                        st.markdown(f"> {content_preview}")
+                                        if i < len(source_documents) - 1:
+                                            st.divider()
+                        except Exception:
+                            pass
         else:
             st.info("💬 No messages yet. Start by asking a question!")
-    
+   
     except Exception as e:
         st.error(f"Failed to load messages: {str(e)}")
 
-    # ---- Persistent Latest-Response Sources Panel ----
-    # source_documents saved to session_state in the complete handler survive st.rerun()
-    # so this section always shows sources for the most recent reply in this chat,
-    # even after Streamlit wipes the transient streaming widget tree.
-    _pending_docs = st.session_state.get("pending_sources", [])
-    _pending_chat = st.session_state.get("pending_sources_chat")
-    if _pending_docs and _pending_chat == active_chat_id:
-        st.markdown("---")
-        with st.expander(f"📚 Latest Response Sources ({len(_pending_docs)} found)", expanded=True):
-            for i, doc in enumerate(_pending_docs):
-                source_name = None
-                try:
-                    source_name = doc.get('source') or (
-                        doc.get('metadata', {}).get('source') if doc.get('metadata') else None
-                    )
-                except Exception:
-                    source_name = None
-                if not source_name:
-                    source_name = f"Source {i+1}"
-                st.markdown(f"**Source {i+1}:** {source_name}")
-                content_preview = (doc.get('page_content') or '')[:300].replace('\n', ' ')
-                if len(doc.get('page_content', '')) > 300:
-                    content_preview += "..."
-                st.markdown(f"> {content_preview}")
-                if i < len(_pending_docs) - 1:
-                    st.divider()
-
     st.divider()
+
+    # ========== INLINE IMAGE UPLOAD (ChatGPT-style) ==========
+    uploaded_image = st.file_uploader(
+        "📷 Attach a potato image for disease analysis",
+        type=["jpg", "jpeg", "png", "bmp", "tiff"],
+        key=f"inline_image_{active_chat_id}_{st.session_state.upload_key_counter}",
+    )
+
+    if uploaded_image is not None:
+        img_cols = st.columns([1, 3])
+        with img_cols[0]:
+            st.image(uploaded_image, width=150)
+        with img_cols[1]:
+            st.caption(f"📄 {uploaded_image.name}")
+            if st.button("🔬 Analyze Disease", type="primary", use_container_width=True):
+                with st.spinner("Analyzing with CLIP + RAG..."):
+                    try:
+                        image_bytes = uploaded_image.getvalue()
+                        result = api_client.analyze_image(
+                            image_bytes=image_bytes,
+                            filename=uploaded_image.name,
+                            chat_id=active_chat_id,
+                            language=st.session_state.response_language,
+                            trigger_rag=True,
+                        )
+                        st.session_state.image_analysis_result = result
+                        st.session_state.image_analysis_chat = active_chat_id
+                        st.session_state.image_analysis_uploaded_bytes = image_bytes
+                        st.session_state.image_analysis_uploaded_name = uploaded_image.name
+                        st.session_state.upload_key_counter += 1
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Analysis failed: {str(e)}")
 
     # Chat Input
     col1, col2 = st.columns([5, 1])
-    
+   
     with col1:
         user_query = st.chat_input(
             "Ask about potato diseases, fertilizers, cultivation...",
             key=f"chat_input_{active_chat_id}"
         )
-    
+   
     with col2:
         stream_toggle = st.checkbox("🌊 Stream", value=True, help="Enable real-time streaming")
-    
+   
     if user_query:
         # Display user message immediately
         with st.chat_message("user"):
             st.markdown(user_query)
-        
+       
         # Clear sources from prior response so stale docs don't persist
         # if the new response happens to find no relevant sources.
         st.session_state.pending_sources = []
@@ -400,7 +482,7 @@ if st.session_state.active_chat_id:
             st.write("Thinking...")
             response_placeholder = st.empty()
             status_placeholder = st.empty()
-            
+           
             try:
                 if stream_toggle:
                     # Stream via backend WebSocket using synchronous wrapper
