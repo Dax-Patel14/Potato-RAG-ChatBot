@@ -6,7 +6,8 @@ from contextlib import contextmanager
 from logging.handlers import RotatingFileHandler
 from typing import Dict, List, Optional, Any
 
-LOG_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'logs')
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+LOG_DIR = os.path.join(PROJECT_ROOT, "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 LOG_PATH = os.path.join(LOG_DIR, 'query_timing.log')
 

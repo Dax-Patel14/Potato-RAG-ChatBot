@@ -1,5 +1,5 @@
-from src.retrieval import load_retriever_from_disk
-from src.generation import create_conversational_chain
+from src.retrieval.retrieval import load_retriever_from_disk
+from src.generation.generation import create_conversational_chain
 
 def main():
     retriever = load_retriever_from_disk()

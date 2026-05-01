@@ -5,7 +5,8 @@ import json
 
 # Use an absolute path or a path relative to the project root
 # ensuring the database file is created in a reliable location
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'chat_history.db')
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+DB_PATH = os.path.join(PROJECT_ROOT, "chat_history.db")
 
 # Initialize database and tables if not exist
 def init_db():

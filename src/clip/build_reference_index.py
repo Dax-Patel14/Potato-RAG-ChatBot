@@ -5,7 +5,7 @@ Scans reference_images/{Category}/ folders, encodes each image with CLIP,
 and builds a FAISS index for fast image-to-image similarity search.
 
 Usage:
-    python -m src.build_reference_index
+    python -m src.clip.build_reference_index
 
 This runs 100% locally — zero API cost. Takes ~1-2 minutes for ~200 images.
 
@@ -22,7 +22,7 @@ from typing import Dict, List
 from PIL import Image
 
 # Ensure project root is on path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 

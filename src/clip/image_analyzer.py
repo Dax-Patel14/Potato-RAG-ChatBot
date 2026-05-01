@@ -4,7 +4,7 @@ Image Analyzer Module — CLIP-based Disease Classification using Reference Imag
 How it works:
   1. You manually collect 10-12 reference images per disease/deficiency category
      and place them in reference_images/{Category_Name}/ folders.
-  2. Run `python -m src.build_reference_index` ONCE to encode all reference images
+    2. Run `python -m src.clip.build_reference_index` ONCE to encode all reference images
      with CLIP and build a small FAISS index (runs 100% locally, zero API cost).
   3. At query time: user uploads an image → CLIP encodes it → cosine similarity
      search against the reference FAISS index → top matches → predicted disease.
@@ -21,7 +21,7 @@ from typing import List, Dict, Tuple, Optional
 from PIL import Image
 import time
 
-from src.logging_utils import setup_logger, log_timing
+from src.core.logging_utils import setup_logger, log_timing
 
 logger = setup_logger('image_analyzer')
 
@@ -29,10 +29,8 @@ logger = setup_logger('image_analyzer')
 # Paths
 # ──────────────────────────────────────────────────────────────────────
 
-REFERENCE_IMAGES_DIR = os.path.join(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), '..')),
-    "reference_images"
-)
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+REFERENCE_IMAGES_DIR = os.path.join(PROJECT_ROOT, "reference_images")
 CLIP_INDEX_PATH = os.path.join(REFERENCE_IMAGES_DIR, "clip_reference_index.faiss")
 CLIP_METADATA_PATH = os.path.join(REFERENCE_IMAGES_DIR, "clip_reference_metadata.json")
 
@@ -267,7 +265,7 @@ class CLIPDiseaseAnalyzer:
             logger.warning(
                 f"Reference FAISS index not found at {REFERENCE_IMAGES_DIR}. "
                 "Image-to-image matching disabled. "
-                "Run: python -m src.build_reference_index"
+                "Run: python -m src.clip.build_reference_index"
             )
             return
 

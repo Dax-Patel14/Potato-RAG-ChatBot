@@ -75,3 +75,26 @@ class ImageAnalysisResponse(BaseModel):
     rag_response: Optional[str] = None
     source_documents: Optional[List[dict]] = []
     timings: Optional[dict] = None
+
+
+# ==================== Phase Diagnosis Models ====================
+
+class DiagnosisStartRequest(BaseModel):
+    initial_observation: Optional[str] = None
+    use_llm: bool = True
+
+
+class DiagnosisAnswerRequest(BaseModel):
+    answer: str
+    use_llm: bool = True
+
+
+class DiagnosisTurnResponse(BaseModel):
+    chat_id: str
+    completed: bool
+    message: str
+    next_question: Optional[str] = None
+    progress: dict
+    phase3: Optional[dict] = None
+    phase4: Optional[dict] = None
+    state: Optional[dict] = None

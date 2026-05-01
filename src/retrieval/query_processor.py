@@ -5,7 +5,7 @@ from langchain_core.prompts import PromptTemplate
 from typing import List
 import re
 import time
-from src.logging_utils import setup_logger, timer, log_timing
+from src.core.logging_utils import setup_logger, timer, log_timing
 
 # Initialize logger
 logger = setup_logger('query_processor')

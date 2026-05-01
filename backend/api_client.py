@@ -7,7 +7,7 @@ Use this in your Streamlit app or other frontends.
 
 import requests
 import json
-from typing import List, Dict, Optional, Generator
+from typing import List, Dict, Optional, Generator, AsyncGenerator
 import asyncio
 import websockets
 
@@ -77,16 +77,59 @@ class AlooPotatoClient:
         self,
         chat_id: str,
         content: str,
-        language: str = "English"
+        language: str = "English",
     ) -> Dict:
         """Send a message and get AI response (blocking)"""
         response = self.session.post(
             f"{self.api_url}/chats/{chat_id}/messages",
             json={
                 "content": content,
-                "language": language
+                "language": language,
             }
         )
+        response.raise_for_status()
+        return response.json()
+
+    # ==================== Phase Diagnosis ====================
+
+    def diagnosis_start(
+        self,
+        chat_id: str,
+        initial_observation: Optional[str] = None,
+        use_llm: bool = True,
+    ) -> Dict:
+        """Start or resume diagnosis session for a chat."""
+        payload = {
+            "initial_observation": initial_observation,
+            "use_llm": use_llm,
+        }
+        response = self.session.post(
+            f"{self.api_url}/chats/{chat_id}/diagnosis/start",
+            json=payload,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def diagnosis_answer(
+        self,
+        chat_id: str,
+        answer: str,
+        use_llm: bool = True,
+    ) -> Dict:
+        """Submit a single diagnosis answer for the current factor."""
+        response = self.session.post(
+            f"{self.api_url}/chats/{chat_id}/diagnosis/answer",
+            json={
+                "answer": answer,
+                "use_llm": use_llm,
+            },
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def diagnosis_state(self, chat_id: str) -> Dict:
+        """Get latest diagnosis session state for a chat."""
+        response = self.session.get(f"{self.api_url}/chats/{chat_id}/diagnosis/state")
         response.raise_for_status()
         return response.json()
    
@@ -123,8 +166,8 @@ class AlooPotatoClient:
         self,
         chat_id: str,
         content: str,
-        language: str = "English"
-    ) -> Generator:
+        language: str = "English",
+    ) -> AsyncGenerator[Dict, None]:
         """Stream message response in real-time"""
        
         ws_url = f"ws://127.0.0.1:8000/api/ws/chats/{chat_id}/stream"
@@ -134,7 +177,7 @@ class AlooPotatoClient:
                 # Send message
                 await websocket.send(json.dumps({
                     "message": content,
-                    "language": language
+                    "language": language,
                 }))
                
                 # Receive chunks
@@ -156,7 +199,7 @@ class AlooPotatoClient:
         self,
         chat_id: str,
         content: str,
-        language: str = "English"
+        language: str = "English",
     ) -> Generator:
         """Synchronous wrapper for streaming (use in Streamlit)"""
         loop = asyncio.new_event_loop()

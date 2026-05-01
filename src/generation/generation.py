@@ -4,16 +4,22 @@ from dotenv import load_dotenv
 import time
 
 # --- UPDATED IMPORTS ---
-from langchain_openai import ChatOpenAI
+# Response generation uses Groq (Llama 3.3 70B) — open-source, fast, no OpenAI cost.
+# OpenAI is still used for embeddings (in retrieval.py / ingestion.py) — that stays unchanged.
+from langchain_groq import ChatGroq
 from langchain_classic.memory import ConversationSummaryBufferMemory
 from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
 # -----------------------
 
 from typing import List, Tuple, Dict, Generator
-from src.logging_utils import setup_logger, timer, log_timing, log_generation_metrics
+from src.core.logging_utils import setup_logger, timer, log_timing, log_generation_metrics
 
 load_dotenv()
+
+# Groq model configuration — change these to switch models easily
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # Set in .env file
 
 # Initialize logger
 logger = setup_logger('generation')
@@ -37,30 +43,44 @@ class ImprovedConversationalChain:
         self.retriever = retriever
 
         # FIX 4 & FIX 2: cap output tokens and add connection resilience
-        self.llm = ChatOpenAI(
-            model="gpt-4o-mini", 
-            temperature=0.1, 
-            streaming=True, 
-            max_tokens=600,
-            timeout=60.0,      # Give OpenAI 60 seconds to respond
-            max_retries=3      # Automatically retry on dropped connections
+        # Uses Groq API (Llama 3.3 70B) — open-source, ~2-3x faster than OpenAI
+        self.llm = ChatGroq(
+            model=GROQ_MODEL,
+            api_key=GROQ_API_KEY,
+            temperature=0.3,
+            streaming=True,
+            max_tokens=1200,
+            timeout=60.0,
+            max_retries=3
         )
 
         # FIX 1 & 5: Dedicated non-streaming LLM for condensing follow-up questions.
         # This completely prevents the double-call bug — the streaming LLM is only
         # ever used for final answer generation.
-        self.condense_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, streaming=False)
+        self.condense_llm = ChatGroq(
+            model=GROQ_MODEL,
+            api_key=GROQ_API_KEY,
+            temperature=0,
+            streaming=False
+        )
 
         # FIX 5: Dedicated non-streaming LLM for memory summarisation.
         # Previously ConversationSummaryBufferMemory shared self.llm (streaming=True),
         # causing unpredictable latency spikes when the buffer exceeded 1000 tokens.
-        self.summary_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, streaming=False)
+        self.summary_llm = ChatGroq(
+            model=GROQ_MODEL,
+            api_key=GROQ_API_KEY,
+            temperature=0,
+            streaming=False
+        )
 
-        # Memory uses summary_llm exclusively
+        # Memory uses summary_llm exclusively.
+        # return_messages=False → load_memory_variables returns a plain string
+        # that can be directly injected into the PromptTemplate {chat_history} slot.
         self.memory = ConversationSummaryBufferMemory(
             llm=self.summary_llm,
             memory_key='chat_history',
-            return_messages=True,
+            return_messages=False,
             output_key='answer',
             max_token_limit=1000
         )
@@ -90,7 +110,7 @@ INSTRUCTIONS:
 3. If the context doesn't contain sufficient information to answer the question, say "I don't have enough information about this in my knowledge base."
 4. NEVER return generic greetings as answers to factual questions - always attempt to use the context first.
 5. Be professional, helpful, and cite sources when available.
-6. Be concise — limit your answer to 3-4 focused paragraphs.
+6. Provide as much detail as the context supports — do not artificially shorten your answer.
 
 Conversation History:
 {chat_history}
@@ -226,11 +246,19 @@ Answer:""",
         return context.strip()
 
     def _sync_memory_with_external_history(self, external_history: List[Tuple[str, str]]):
-        """Sync external chat history with internal ConversationSummaryBufferMemory."""
+        """Sync external chat history with internal ConversationSummaryBufferMemory.
+
+        Loads the last 5 turns into the buffer, then calls prune() which triggers
+        ConversationSummaryBufferMemory's summarisation logic: if the buffer exceeds
+        max_token_limit (1000 tokens), the oldest messages are compressed into a
+        rolling summary via summary_llm.  Recent messages are kept verbatim.
+        """
         self.memory.clear()
         for human_msg, ai_msg in external_history[-5:]:
             self.memory.chat_memory.add_user_message(human_msg)
             self.memory.chat_memory.add_ai_message(ai_msg)
+        # Trigger summarisation if buffer exceeds max_token_limit
+        self.memory.prune()
 
     # ------------------------------------------------------------------
     # Public interface
@@ -260,7 +288,10 @@ Answer:""",
             log_timing(logger, "SOURCE_DOCS_CAPTURED", {'count': len(docs)})
 
             context = self._build_context(docs)
-            history_str = self._format_history_str(external_chat_history)
+            # Read back from ConversationSummaryBufferMemory:
+            # - If all turns fit within 1000 tokens → verbatim last-5 turns
+            # - If over limit → compressed summary of older turns + verbatim recent turns
+            history_str = self.memory.load_memory_variables({})['chat_history']
             prompt_str = self.qa_prompt.format(
                 context=context,
                 question=condensed_question,
@@ -336,7 +367,10 @@ Answer:""",
             log_timing(logger, "SOURCE_DOCS_CAPTURED", {'count': len(docs)})
 
             context = self._build_context(docs)
-            history_str = self._format_history_str(external_chat_history)
+            # Read back from ConversationSummaryBufferMemory:
+            # - If all turns fit within 1000 tokens → verbatim last-5 turns
+            # - If over limit → compressed summary of older turns + verbatim recent turns
+            history_str = self.memory.load_memory_variables({})['chat_history']
             prompt_str = self.qa_prompt.format(
                 context=context,
                 question=condensed_question,

@@ -15,7 +15,7 @@ from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 # -----------------------
 
-from src.logging_utils import setup_logger, timer, log_timing, log_retrieval_metrics
+from src.core.logging_utils import setup_logger, timer, log_timing, log_retrieval_metrics
 
 # Point this to the new multimodal index directory
 FAISS_INDEX_PATH = "faiss_index_multimodal"

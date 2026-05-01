@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uuid
-from typing import List
+from typing import List, Optional, Dict, Any
 import asyncio
 import threading
 import time
@@ -16,20 +16,30 @@ import json
 from backend.config import CORS_ORIGINS, API_HOST, API_PORT, DATABASE_TYPE, DEBUG
 from backend.schemas import (
     ChatCreate, ChatRename, ChatResponse, ChatDetailResponse,
-    MessageCreate, MessageResponse, StreamMessage, HealthResponse
+    MessageCreate, MessageResponse, StreamMessage, HealthResponse,
+    DiagnosisStartRequest, DiagnosisAnswerRequest, DiagnosisTurnResponse,
 )
-from src.chat_db import (
+from src.core.chat_db import (
     init_db, add_chat, get_chats, get_messages, 
     add_message, rename_chat as db_rename_chat, 
     delete_chat as db_delete_chat, get_chat_by_id
 )
-from src.generation import create_conversational_chain
-from src.retrieval import load_retriever_from_disk
-from src.logging_utils import setup_logger, log_timing, log_query_start, log_query_complete
+from src.generation.generation import create_conversational_chain
+from src.retrieval.retrieval import load_retriever_from_disk
+from src.core.logging_utils import setup_logger, log_timing, log_query_start, log_query_complete
+from src.cot.phase2_questionnaire_engine import (
+    load_phase1_canonical_schema,
+    build_phase2_initial_state,
+    submit_phase2_answer,
+    get_current_question,
+    build_phase2_summary,
+)
+from src.cot.phase3_candidate_narrowing import update_state_with_phase3
+from src.cot.phase4_final_decision import update_state_with_phase4
 
 # Image analysis (CLIP-based, runs locally — zero API cost)
 try:
-    from src.image_analyzer import CLIPDiseaseAnalyzer
+    from src.clip.image_analyzer import CLIPDiseaseAnalyzer
     IMAGE_ANALYSIS_AVAILABLE = True
 except ImportError:
     print("CLIP image analysis module not available. Install: pip install transformers torch")
@@ -60,12 +70,130 @@ app.add_middleware(
 qa_chain = None
 retriever = None
 image_analyzer = None
+phase_schema: Optional[Dict[str, Any]] = None
+phase5_profile: Dict[str, Any] = {}
+
+PHASE_DIAGNOSIS_STATE_KEY = "phase_diagnosis_state"
+
+
+def _project_root() -> str:
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+
+def _phase5_profile_path() -> str:
+    return os.path.join(_project_root(), "data", "COT", "phase5_weight_profile.json")
+
+
+def _load_phase5_profile_if_available() -> Dict[str, Any]:
+    path = _phase5_profile_path()
+    if not os.path.exists(path):
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _compact_phase_state(state: Dict[str, Any]) -> Dict[str, Any]:
+    """Persist only compact state; Phase 03/04 can be recomputed from answers."""
+    compact = {
+        "version": state.get("version"),
+        "chat_id": state.get("chat_id"),
+        "created_at": state.get("created_at"),
+        "updated_at": state.get("updated_at"),
+        "completed": bool(state.get("completed", False)),
+        "step_index": int(state.get("step_index", 0)),
+        "factor_sequence": state.get("factor_sequence", []),
+        "answers": state.get("answers", {}),
+        "history": state.get("history", []),
+    }
+    # Keep phase4 decision if present and completed.
+    if isinstance(state.get("phase4"), dict):
+        compact["phase4"] = state.get("phase4")
+    return compact
+
+
+def _extract_latest_phase_state(chat_id: str) -> Optional[Dict[str, Any]]:
+    messages = get_messages(chat_id)
+    for row in reversed(messages):
+        metadata = row[3] if len(row) > 3 else None
+        if isinstance(metadata, dict) and isinstance(metadata.get(PHASE_DIAGNOSIS_STATE_KEY), dict):
+            return metadata.get(PHASE_DIAGNOSIS_STATE_KEY)
+    return None
+
+
+def _persist_phase_message(chat_id: str, sender: str, content: str, state: Dict[str, Any]) -> None:
+    add_message(
+        chat_id,
+        sender,
+        content,
+        metadata={
+            PHASE_DIAGNOSIS_STATE_KEY: _compact_phase_state(state),
+            "phase_diagnosis": True,
+        },
+    )
+
+
+def _apply_phase5_profile(state: Dict[str, Any]) -> Dict[str, Any]:
+    """Apply tuned Phase 05 profile on top of Phase 02 state after each answer."""
+    global phase_schema, phase5_profile
+    if phase_schema is None:
+        return state
+
+    weights_override = phase5_profile.get("factor_weights") if isinstance(phase5_profile, dict) else None
+    scoring_cfg = phase5_profile.get("scoring_config") if isinstance(phase5_profile, dict) else None
+
+    update_state_with_phase3(
+        state,
+        phase_schema,
+        factor_weights_override=weights_override,
+        scoring_config=scoring_cfg,
+    )
+    return state
+
+
+def _ensure_phase_state(chat_id: str) -> Dict[str, Any]:
+    global phase_schema
+    prev = _extract_latest_phase_state(chat_id)
+    state = build_phase2_initial_state(chat_id=chat_id, schema=phase_schema, existing_state=prev)
+    _apply_phase5_profile(state)
+    return state
+
+
+def _diagnosis_turn_response(chat_id: str, message: str, state: Dict[str, Any]) -> DiagnosisTurnResponse:
+    summary = build_phase2_summary(state)
+    return DiagnosisTurnResponse(
+        chat_id=chat_id,
+        completed=bool(summary.get("completed", False)),
+        message=message,
+        next_question=get_current_question(state),
+        progress=summary.get("progress", {}),
+        phase3=summary.get("phase3", {}),
+        phase4=summary.get("phase4", {}),
+        state=summary,
+    )
+
+
+def _build_next_question_message(state: Dict[str, Any]) -> str:
+    next_question = get_current_question(state)
+    if not next_question:
+        return "[diagnosis] No pending question."
+    q_no = int(state.get("step_index", 0)) + 1
+    return f"[diagnosis] Q{q_no}: {next_question}"
+
+
+def _build_final_diagnosis_message(state: Dict[str, Any]) -> str:
+    phase4 = state.get("phase4", {}) if isinstance(state.get("phase4"), dict) else {}
+    disease = phase4.get("selected_disease_name") or phase4.get("selected_disease_id") or "Unknown"
+    confidence = float(phase4.get("confidence", 0.0) or 0.0)
+    return f"[diagnosis] Final Disease Suggestion: {disease} (confidence {confidence:.0%})"
 
 # Startup and Shutdown events
 @app.on_event("startup")
 async def startup_event():
     """Initialize database and load RAG chain on startup"""
-    global qa_chain, retriever
+    global qa_chain, retriever, phase_schema, phase5_profile
     
     print(" Starting Aloo Sahayak API...")
     
@@ -95,6 +223,20 @@ async def startup_event():
         except Exception as e:
             print(f" CLIP image analyzer failed (non-fatal): {e}")
             image_analyzer = None
+
+    # Load Phase diagnosis assets (non-blocking — diagnosis APIs guard availability)
+    try:
+        phase_schema = load_phase1_canonical_schema()
+        print(" Phase diagnosis schema loaded")
+    except Exception as e:
+        phase_schema = None
+        print(f" Phase diagnosis schema load failed (non-fatal): {e}")
+
+    phase5_profile = _load_phase5_profile_if_available()
+    if phase5_profile:
+        print(" Phase 05 calibration profile loaded")
+    else:
+        print(" Phase 05 calibration profile not found; using default scoring")
     
     print(" API startup complete!")
 
@@ -235,6 +377,97 @@ async def delete_chat(chat_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ==================== Phase Diagnosis Endpoints ====================
+
+@app.post("/api/chats/{chat_id}/diagnosis/start", response_model=DiagnosisTurnResponse)
+async def diagnosis_start(chat_id: str, request: DiagnosisStartRequest):
+    """Start or resume deterministic phase diagnosis workflow for a chat."""
+    global phase_schema
+    try:
+        if phase_schema is None:
+            raise HTTPException(status_code=503, detail="Phase diagnosis schema is not available")
+
+        state = _ensure_phase_state(chat_id)
+        message = "Diagnosis session started."
+
+        if request.initial_observation and not state.get("completed", False):
+            add_message(
+                chat_id,
+                "user",
+                f"[diagnosis] {request.initial_observation}",
+                metadata={"phase_diagnosis": True},
+            )
+            message = "Initial observation recorded."
+
+        assistant_msg = _build_next_question_message(state)
+        _persist_phase_message(chat_id, "assistant", assistant_msg, state)
+        return _diagnosis_turn_response(chat_id, assistant_msg.replace("[diagnosis] ", "", 1), state)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/chats/{chat_id}/diagnosis/answer", response_model=DiagnosisTurnResponse)
+async def diagnosis_answer(chat_id: str, request: DiagnosisAnswerRequest):
+    """Submit one answer for the current factor in diagnosis workflow."""
+    global phase_schema
+    try:
+        if phase_schema is None:
+            raise HTTPException(status_code=503, detail="Phase diagnosis schema is not available")
+
+        state = _ensure_phase_state(chat_id)
+        if state.get("completed", False):
+            _persist_phase_message(chat_id, "assistant", "[diagnosis] already completed", state)
+            return _diagnosis_turn_response(chat_id, "Questionnaire already completed.", state)
+
+        submit_phase2_answer(
+            state,
+            request.answer,
+            schema=phase_schema,
+            use_phase4_llm=request.use_llm,
+        )
+
+        # Re-apply tuned calibration after each turn.
+        _apply_phase5_profile(state)
+
+        if state.get("completed", False):
+            update_state_with_phase4(state, use_llm=request.use_llm)
+
+        add_message(
+            chat_id,
+            "user",
+            f"[diagnosis] {request.answer}",
+            metadata={"phase_diagnosis": True},
+        )
+
+        if state.get("completed", False):
+            assistant_msg = _build_final_diagnosis_message(state)
+        else:
+            assistant_msg = _build_next_question_message(state)
+
+        _persist_phase_message(chat_id, "assistant", assistant_msg, state)
+        return _diagnosis_turn_response(chat_id, assistant_msg.replace("[diagnosis] ", "", 1), state)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/chats/{chat_id}/diagnosis/state", response_model=DiagnosisTurnResponse)
+async def diagnosis_state(chat_id: str):
+    """Fetch latest persisted diagnosis state for a chat."""
+    try:
+        state = _extract_latest_phase_state(chat_id)
+        if not state:
+            raise HTTPException(status_code=404, detail="Diagnosis session not started")
+        return _diagnosis_turn_response(chat_id, "Diagnosis state loaded.", state)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== Message Endpoints ====================
 
 @app.get("/api/chats/{chat_id}/messages", response_model=List[MessageResponse])
@@ -270,7 +503,12 @@ async def send_message(chat_id: str, message: MessageCreate):
         
         # Add user message to database
         db_start = time.perf_counter()
-        add_message(chat_id, "user", user_query)
+        add_message(
+            chat_id,
+            "user",
+            user_query,
+            metadata=None,
+        )
         db_elapsed = time.perf_counter() - db_start
         
         log_timing(api_logger, "DB_ADD_USER_MESSAGE", {
@@ -348,7 +586,8 @@ async def send_message(chat_id: str, message: MessageCreate):
 
         # Add AI message to database
         db_ai_start = time.perf_counter()
-        add_message(chat_id, "assistant", ai_response, metadata={"source_documents": serialized_sources})
+        assistant_metadata = {"source_documents": serialized_sources}
+        add_message(chat_id, "assistant", ai_response, metadata=assistant_metadata)
         db_ai_elapsed = time.perf_counter() - db_ai_start
         
         log_timing(api_logger, "DB_ADD_AI_MESSAGE", {
@@ -403,7 +642,12 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
             
             # Add user message to database
             db_start = time.perf_counter()
-            add_message(chat_id, "user", user_query)
+            add_message(
+                chat_id,
+                "user",
+                user_query,
+                metadata=None,
+            )
             db_elapsed = time.perf_counter() - db_start
             
             log_timing(api_logger, "DB_ADD_USER_WS", {
@@ -553,7 +797,8 @@ async def websocket_stream(websocket: WebSocket, chat_id: str):
 
                 # Add AI response to database after streaming completes (include sources metadata)
                 db_ai_start = time.perf_counter()
-                add_message(chat_id, "assistant", full_response, metadata={"source_documents": serialized_sources})
+                assistant_metadata = {"source_documents": serialized_sources}
+                add_message(chat_id, "assistant", full_response, metadata=assistant_metadata)
                 db_ai_elapsed = time.perf_counter() - db_ai_start
                 
                 log_timing(api_logger, "DB_ADD_AI_WS", {

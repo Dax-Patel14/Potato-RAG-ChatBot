@@ -1,4 +1,4 @@
-# File: src/3_augmentation.py
+# File: src/generation/augmentation.py
 from langchain_core.prompts import PromptTemplate
 from langchain.schema import Document
 

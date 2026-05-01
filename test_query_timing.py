@@ -7,10 +7,10 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from src.logging_utils import setup_logger, log_query_start, log_query_complete
-from src.retrieval import load_retriever_from_disk
-from src.generation import create_conversational_chain
-from src.query_processor import QueryProcessor
+from src.core.logging_utils import setup_logger, log_query_start, log_query_complete
+from src.retrieval.retrieval import load_retriever_from_disk
+from src.generation.generation import create_conversational_chain
+from src.retrieval.query_processor import QueryProcessor
 import time
 import uuid
 
